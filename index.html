@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Пазлы</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.1.72">
+  <script src="js/levels.js?ver=1.1.72"></script>
+  <script src="https://yandex.ru/games/sdk/v2"></script>
+  <script>
+    let domain = document.domain;
+
+    window.onload = function () {
+      var preloader = document.getElementById('p_prldr');
+      preloader.classList.add('fadeout');
+
+      setTimeout(function () {
+        preloader.parentNode.removeChild(preloader);
+      }, 200);
+
+      if(domain.indexOf("yandex") !== -1){
+        YaGames.init().then(ysdk => {
+          ysdk.features.LoadingAPI?.ready(); 
+        });
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <div id="p_prldr"><span class="svg_anm"></span></div>
+
+  <div class="menu">
+    <h1>Выберите<br>изображение</h1>
+    <div class="main-images"></div>
+  </div>
+
+  <div class="game">
+    <div class="message">
+      <div class="message-body">
+        <div class="message-title">
+          Победа!
+        </div>
+        <div class="message-text">
+          Вы отлично справились!
+          <div class="message-control">
+            <a href="#" class="next-button">
+              Далее
+            </a>
+            <a href="#" class="download-button" download>
+              Скачать
+            </a>
+          </div>
+          <div class="message-small">Сейчас будет показана реклама</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tiles"></div>
+
+    <div class="game-control">
+      <a href="index.html" class="menu-button">
+        Меню
+      </a>
+      <a onclick="restartGame()" href="#" class="restart-button">
+        Рестарт
+      </a>
+    </div>
+  </div>
+  <script src="js/game.js?ver=1.1.72"></script>
+  <script>
+    let getLevel = $_GET('level');
+
+    if (getLevel) {
+      let menu = document.querySelector('.menu');
+      menu.style.display = "none";
+
+      let game = document.querySelector('.game');
+      game.style.display = "flex";
+
+      level = parseInt(getLevel);
+      size = levels[getLevel].size;
+      gameImage = levels[getLevel].image;
+
+      newGame(level, size, gameImage);
+    }else{
+      let levelsContainer = document.querySelector('.main-images');
+    
+      for (const key in levels) {
+        let linkLevel = document.createElement('a');
+        linkLevel.href = '?level=' + levels[key].id;
+        linkLevel.classList.add('level' + levels[key].id);
+    
+        let imgLevel = document.createElement('img');
+        imgLevel.src = levels[key].image;
+    
+        linkLevel.append(imgLevel);
+    
+        levelsContainer.append(linkLevel);
+      }
+    
+      let storage = window.localStorage;
+      let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
+    
+      for (const key in winsJSON) {
+        if (winsJSON[key].win) {
+          let level = document.querySelector('.' + key);
+          level.classList.add("no-blur");
+        }
+      }
+    }
+	</script>
+</body>
+
+</html>
