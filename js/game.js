@@ -137,7 +137,7 @@ function cutImage(context, x, y, width, height) {
   canvasPart.width = width;
   canvasPart.height = height;
   contextPart.putImageData(imageData, 0, 0);
-  return canvasPart.toDataURL();
+  return canvasPart.toDataURL("image/jpeg");
 }
 
 function resizeGame() {
