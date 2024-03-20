@@ -19,9 +19,9 @@
         preloader.parentNode.removeChild(preloader);
       }, 200);
 
-      if(domain.indexOf("yandex") !== -1){
+      if (domain.indexOf("yandex") !== -1) {
         YaGames.init().then(ysdk => {
-          ysdk.features.LoadingAPI?.ready(); 
+          ysdk.features.LoadingAPI?.ready();
         });
       }
     };
@@ -78,7 +78,9 @@
       </a>
     </div>
   </div>
-  <audio id="sound"><source src="mp3/click.mp3" type="audio/mp3"></audio>
+  <audio id="sound">
+    <source src="mp3/click.mp3" type="audio/mp3">
+  </audio>
   <script src="js/game.js?ver=1.1.72"></script>
   <script>
     let getLevel = $_GET('level');
@@ -95,25 +97,25 @@
       gameImage = levels[getLevel].image;
 
       newGame(level, size, gameImage);
-    }else{
+    } else {
       let levelsContainer = document.querySelector('.main-images');
-    
+
       for (const key in levels) {
         let linkLevel = document.createElement('a');
         linkLevel.href = '?level=' + levels[key].id;
         linkLevel.classList.add('level' + levels[key].id);
-    
+
         let imgLevel = document.createElement('img');
         imgLevel.src = levels[key].image;
-    
+
         linkLevel.append(imgLevel);
-    
+
         levelsContainer.append(linkLevel);
       }
-    
+
       let storage = window.localStorage;
       let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
-    
+
       for (const key in winsJSON) {
         if (winsJSON[key].win) {
           let level = document.querySelector('.' + key);
@@ -121,7 +123,7 @@
         }
       }
     }
-	</script>
+  </script>
 </body>
 
 </html>

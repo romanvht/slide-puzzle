@@ -16,7 +16,7 @@ let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
 
 let soundOff = storage.getItem('soundOff');
-if(soundOff == 'yes')gameSoundIcon.classList.add('sound-disable');
+if (soundOff == 'yes') gameSoundIcon.classList.add('sound-disable');
 
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
@@ -49,8 +49,8 @@ function newGame(level, size, gameImage) {
 
   let image = new Image();
   let canvas = document.createElement('canvas');
-  let context = canvas.getContext('2d', { 
-    willReadFrequently: true 
+  let context = canvas.getContext('2d', {
+    willReadFrequently: true
   });
 
   image.src = gameImage;
@@ -105,16 +105,6 @@ function drawGame(context, image) {
   }
 }
 
-function cutImage(context, x, y, width, height) {
-  let imageData = context.getImageData(x, y, width, height);
-  let canvasPart = document.createElement('canvas');
-  let contextPart = canvasPart.getContext('2d');
-  canvasPart.width = width;
-  canvasPart.height = height;
-  contextPart.putImageData(imageData, 0, 0);
-  return canvasPart.toDataURL("image/jpeg");
-}
-
 function createTiles(imageArray, save) {
   imageArray.forEach(function (tile, i) {
     let index = i + 1;
@@ -149,6 +139,16 @@ function createTiles(imageArray, save) {
 
     gameTable.append(newTile);
   });
+}
+
+function cutImage(context, x, y, width, height) {
+  let imageData = context.getImageData(x, y, width, height);
+  let canvasPart = document.createElement('canvas');
+  let contextPart = canvasPart.getContext('2d');
+  canvasPart.width = width;
+  canvasPart.height = height;
+  contextPart.putImageData(imageData, 0, 0);
+  return canvasPart.toDataURL("image/jpeg");
 }
 
 function resizeGame() {
@@ -195,7 +195,7 @@ function swap(clicked) {
 
   if (gameStart && !soundOff) {
     audio.pause();
-    audio.currentTime=0;
+    audio.currentTime = 0;
     audio.play();
   }
 
@@ -236,7 +236,7 @@ function swap(clicked) {
       }, 500);
 
       /**** Yandex Ads ****/
-      if(domain.indexOf("yandex") !== -1){
+      if (domain.indexOf("yandex") !== -1) {
         setTimeout(function () {
           YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
         }, 2000);
@@ -271,7 +271,7 @@ function restartGame() {
   storage.removeItem('state' + level);
 
   /**** Yandex Ads ****/
-  if(domain.indexOf("yandex") !== -1){
+  if (domain.indexOf("yandex") !== -1) {
     YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
   }
   /*** /Yandex Ads ****/
@@ -280,11 +280,11 @@ function restartGame() {
 }
 
 function muteGame() {
-  if(soundOff){
+  if (soundOff) {
     gameSoundIcon.classList.remove('sound-disable');
     storage.removeItem('soundOff', false);
     soundOff = false;
-  }else{
+  } else {
     gameSoundIcon.classList.add('sound-disable');
     storage.setItem('soundOff', 'yes');
     soundOff = true;
