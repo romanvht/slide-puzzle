@@ -276,7 +276,7 @@ h1 {
 
 @media screen and (orientation: portrait) {
   .game {
-    padding-bottom: 70px;
+    padding-bottom: 60px;
   }
 
   .game-control{
