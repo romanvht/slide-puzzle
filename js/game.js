@@ -10,7 +10,7 @@ let gameTable = document.getElementById('tiles');
 let gameMessage = document.querySelector('.message');
 let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
-let audio = new Audio("mp3/click.mp3");
+let audio = document.getElementById('sound');
 
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
