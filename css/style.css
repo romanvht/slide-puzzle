@@ -246,6 +246,52 @@ h1 {
   border-radius: 5px;
 }
 
+.game-info {
+  position: absolute;
+  font-size: 0;
+  padding: 20px 0px;
+  text-align: center;
+}
+
+.game-info_box {
+  display: inline-block;
+  background: rgba(0, 0, 0, .5);
+  border-radius: 5px;
+}
+
+.steps-count {
+  color: #fff;
+  padding: 10px;
+}
+
+.steps-count_info {
+  display: block;
+  color: #fff;
+  font-weight: bold;
+}
+
+.sound-button img{
+  width: 60%;
+  height: 60%;
+  vertical-align: middle;
+}
+
+.sound-disable img {
+  opacity: .7;
+}
+
+.sound-disable:before {
+  content:'';
+  position:absolute;
+  display:block;
+  width:60%;
+  height:60%;
+  left:20%;
+  top:20%;
+  background: rgba(0,0,0,0) url(../img/sound/cross.svg) no-repeat;
+  background-size:100% 100%;
+}
+
 .game-control {
   position: absolute;
   font-size: 0;
@@ -276,7 +322,37 @@ h1 {
 
 @media screen and (orientation: portrait) {
   .game {
+    padding-top: 60px;
     padding-bottom: 60px;
+  }
+
+  .game-info{
+  	width: 90%;
+  	top: 0px;
+  }
+
+  .game-info_box {
+    height: 50px;
+  }
+
+  .steps-count {
+    position: absolute;
+    left: 0px;
+    font-size: 12px;
+  }
+
+  .steps-count_info {
+    font-size: 18px;
+    line-height: 20px;
+  }
+
+  .sound-button {
+    position: absolute;
+    right: 0px;
+    text-align: center;
+    line-height: 50px;
+    width: 50px;
+    height: 50px;
   }
 
   .game-control{
@@ -294,23 +370,53 @@ h1 {
 }
 
 @media screen and (orientation: landscape) {
+  .game-info{
+  	width: 100%;
+  	top: 0px;
+  }
+
+  .game-info_box {
+    height: 55px;
+  }
+
+  .steps-count {
+    position: absolute;
+    left: 20px;
+    font-size: 14px;
+  }
+
+  .steps-count_info {
+    font-size: 20px;
+    line-height: 22px;
+  }
+
+  .sound-button {
+    position: absolute;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+  }
+
   .game-control{
   	width: 100%;
-    top: 0px;
+    bottom: 0px;
   }
   
   .menu-button {
   	position: absolute;
+    width: 120px;
   	left: 20px;
-  	top: 20px;
-  	padding: 16px 32px;
+  	bottom: 20px;
+  	padding: 16px 0;
   }
   
   .restart-button {
   	position: absolute;
+    width: 120px;
   	right: 20px;
-  	top: 20px;
-  	padding: 16px 32px;
+  	bottom: 20px;
+  	padding: 16px 0;
   }
 }
 

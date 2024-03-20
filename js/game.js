@@ -1,16 +1,24 @@
 let level;
 let size;
+let step;
 let gameImage;
 let numberOfTiles;
 let highlighted;
-let storage;
+let storage = window.localStorage;
 
 let gameStart = false;
 let gameTable = document.getElementById('tiles');
+let audio = document.getElementById('sound');
+let gameStepInfo = document.querySelector('.steps-count_info');
+let gameSoundIcon = document.querySelector('.sound-button');
 let gameMessage = document.querySelector('.message');
 let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
-let audio = document.getElementById('sound');
+
+let soundOff = storage.getItem('soundOff');
+if(soundOff == 'yes'){
+  gameSoundIcon.classList.add('sound-disable');
+}
 
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
@@ -39,11 +47,13 @@ function newGame(level, size, gameImage) {
   gameImage = gameImage;
   numberOfTiles = size ** 2;
   highlighted = numberOfTiles;
-  storage = window.localStorage;
+  step = 0;
 
   let image = new Image();
   let canvas = document.createElement('canvas');
-  let context = canvas.getContext('2d');
+  let context = canvas.getContext('2d', { 
+    willReadFrequently: true 
+  });
 
   image.src = gameImage;
   image.onload = function () {
@@ -86,11 +96,25 @@ function drawGame(context, image) {
   let save = JSON.parse(storage.getItem('state' + level));
 
   if (save) {
+    gameStart = true;
+    step = save.steps;
+    gameStepInfo.textContent = step;
     createTiles(imageArray, save);
   } else {
+    gameStepInfo.textContent = 0;
     createTiles(imageArray);
     shuffle();
   }
+}
+
+function cutImage(context, x, y, width, height) {
+  let imageData = context.getImageData(x, y, width, height);
+  let canvasPart = document.createElement('canvas');
+  let contextPart = canvasPart.getContext('2d');
+  canvasPart.width = width;
+  canvasPart.height = height;
+  contextPart.putImageData(imageData, 0, 0);
+  return canvasPart.toDataURL("image/jpeg");
 }
 
 function createTiles(imageArray, save) {
@@ -105,7 +129,6 @@ function createTiles(imageArray, save) {
       number = imageArray[save.table[i].value - 1].number;
       image = imageArray[save.table[i].value - 1].image;
       selected = save.table[i].selected;
-      gameStart = true;
     } else {
       number = tile.image.number;
       image = tile.image;
@@ -128,16 +151,6 @@ function createTiles(imageArray, save) {
 
     gameTable.append(newTile);
   });
-}
-
-function cutImage(context, x, y, width, height) {
-  let imageData = context.getImageData(x, y, width, height);
-  let canvasPart = document.createElement('canvas');
-  let contextPart = canvasPart.getContext('2d');
-  canvasPart.width = width;
-  canvasPart.height = height;
-  contextPart.putImageData(imageData, 0, 0);
-  return canvasPart.toDataURL("image/jpeg");
 }
 
 function resizeGame() {
@@ -169,7 +182,7 @@ function shuffle() {
       } else if (x == 3) {
         direction = highlighted - size;
       }
-      swap(direction, true);
+      swap(direction);
       if (i >= totalShuffles) {
         gameStart = true;
       }
@@ -177,12 +190,12 @@ function shuffle() {
   }
 }
 
-function swap(clicked, no_audio) {
+function swap(clicked) {
   if (clicked < 1 || clicked > (numberOfTiles)) {
     return;
   }
 
-  if(!no_audio){
+  if (gameStart && !soundOff) {
     audio.pause();
     audio.currentTime=0;
     audio.play();
@@ -203,11 +216,7 @@ function swap(clicked, no_audio) {
   }
 
   if (gameStart) {
-    let gameState = {};
-    gameState.table = saveGame();
-    gameState.highlighted = highlighted;
-    gameState.gameStart = gameStart;
-    storage.setItem('state' + level, JSON.stringify(gameState));
+    storage.setItem('state' + level, JSON.stringify(saveGame()));
 
     if (checkWin()) {
       let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
@@ -249,7 +258,14 @@ function saveGame() {
       'value': parseInt(currentTileValue)
     });
   }
-  return saveArray;
+
+  let gameState = {};
+  gameState.table = saveArray;
+  gameState.highlighted = highlighted;
+  gameState.gameStart = gameStart;
+  gameState.steps = step;
+
+  return gameState;
 }
 
 function restartGame() {
@@ -263,6 +279,18 @@ function restartGame() {
   /*** /Yandex Ads ****/
 
   newGame(level, size, gameImage);
+}
+
+function muteGame() {
+  if(soundOff){
+    gameSoundIcon.classList.remove('sound-disable');
+    storage.removeItem('soundOff', false);
+    soundOff = false;
+  }else{
+    gameSoundIcon.classList.add('sound-disable');
+    storage.setItem('soundOff', 'yes');
+    soundOff = true;
+  }
 }
 
 function checkWin() {
@@ -296,4 +324,8 @@ function setSelected(index) {
   newTile.setAttribute('number', currentTileNumber);
 
   highlighted = index;
+  if (gameStart) {
+    step++;
+    gameStepInfo.textContent = step;
+  }
 }
