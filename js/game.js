@@ -168,7 +168,7 @@ function shuffle() {
       } else if (x == 3) {
         direction = highlighted - size;
       }
-      swap(direction);
+      swap(direction, true);
       if (i >= totalShuffles) {
         gameStart = true;
       }
@@ -176,9 +176,14 @@ function shuffle() {
   }
 }
 
-function swap(clicked, nosave) {
+function swap(clicked, no_audio) {
   if (clicked < 1 || clicked > (numberOfTiles)) {
     return;
+  }
+
+  if(!no_audio){
+    const audio = new Audio("mp3/click.mp3");
+    audio.play();
   }
 
   if (clicked == highlighted + 1) {
