@@ -7,21 +7,16 @@ html {
 }
 
 body {
-  background: linear-gradient(180deg, #641e39, #98749b, #ddf810, #8f4ff4);
-  background-size: 400% 400%;
-  animation: gradient 300s ease infinite;
+  background: radial-gradient(ellipse at center, #0a2864 0%,#3164bc 100%); 
+  background-size: 100% 100%;
   font: 1em Arial, sans-serif;
   margin: 0 auto;
   height: 100%;
   overflow: hidden;
   -webkit-user-select: none;
-  /* Chrome/Safari */
   -moz-user-select: none;
-  /* Firefox */
   -ms-user-select: none;
-  /* IE/Edge */
   user-select: none;
-  /* Стандартный синтаксис */
 }
 
 ::-webkit-scrollbar {
@@ -43,24 +38,10 @@ body {
   cursor: pointer;
 }
 
-@keyframes gradient {
-  0% {
-    background-position: 50% 0%;
-  }
-
-  50% {
-    background-position: 50% 100%;
-  }
-
-  100% {
-    background-position: 50% 0%;
-  }
-}
-
 #p_prldr {
   position: fixed;
-  background: linear-gradient(180deg, #641e39, #98749b, #ddf810, #8f4ff4);
-  background-size: 400% 400%;
+  background: radial-gradient(ellipse at center, #0a2864 0%,#3164bc 100%);
+  background-size: 100% 100%;
   left: 0;
   top: 0;
   right: 0;
@@ -69,18 +50,23 @@ body {
   opacity: 1;
 }
 
-#p_prldr .svg_anm {
+#p_prldr svg {
   position: fixed;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: url(oval.svg) center center no-repeat;
-  background-size: 101px;
-  margin: 0px;
-  opacity: 1;
+  left: calc(50% - 50px);
+  top: calc(50% - 50px);
+  animation: rotate .5s linear infinite;
+  width: 100px;
+  height: 100px;
 }
 
+@keyframes rotate {
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 @keyframes fadeOut {
   0% {
