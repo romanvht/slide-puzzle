@@ -16,9 +16,7 @@ let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
 
 let soundOff = storage.getItem('soundOff');
-if(soundOff == 'yes'){
-  gameSoundIcon.classList.add('sound-disable');
-}
+if(soundOff == 'yes')gameSoundIcon.classList.add('sound-disable');
 
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
