@@ -9,15 +9,19 @@ html {
 body {
   background: linear-gradient(180deg, #641e39, #98749b, #ddf810, #8f4ff4);
   background-size: 400% 400%;
-	animation: gradient 300s ease infinite;
+  animation: gradient 300s ease infinite;
   font: 1em Arial, sans-serif;
   margin: 0 auto;
   height: 100%;
   overflow: hidden;
-  -webkit-user-select: none; /* Chrome/Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
-  user-select: none; /* Стандартный синтаксис */
+  -webkit-user-select: none;
+  /* Chrome/Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE/Edge */
+  user-select: none;
+  /* Стандартный синтаксис */
 }
 
 ::-webkit-scrollbar {
@@ -25,7 +29,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 5px; 
+  border-radius: 5px;
   background: rgba(0, 0, 0, .05);
 }
 
@@ -35,20 +39,22 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #696969; 
+  background: #696969;
   cursor: pointer;
 }
 
 @keyframes gradient {
-	0% {
-		background-position: 50% 0%;
-	}
-	50% {
-		background-position: 50% 100%;
-	}
-	100% {
-		background-position: 50% 0%;
-	}
+  0% {
+    background-position: 50% 0%;
+  }
+
+  50% {
+    background-position: 50% 100%;
+  }
+
+  100% {
+    background-position: 50% 0%;
+  }
 }
 
 #p_prldr {
@@ -114,7 +120,8 @@ h1 {
   color: rgba(0, 0, 0, .8);
 }
 
-.menu, .game {
+.menu,
+.game {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -126,14 +133,14 @@ h1 {
   display: none;
 }
 
-.main-images{
+.main-images {
   margin-bottom: 30px;
   text-align: center;
   overflow-y: auto;
   max-width: 1100px;
 }
 
-.main-images a{
+.main-images a {
   display: inline-block;
   padding: 5px;
   background: rgba(255, 255, 255, .8);
@@ -141,7 +148,7 @@ h1 {
 }
 
 @media screen and (orientation: portrait) {
-  .main-images a{
+  .main-images a {
     width: 150px;
     height: 150px;
     margin: 0px 5px;
@@ -150,7 +157,7 @@ h1 {
 }
 
 @media screen and (orientation: landscape) {
-  .main-images a{
+  .main-images a {
     width: 250px;
     height: 250px;
     margin: 0px 5px;
@@ -158,7 +165,7 @@ h1 {
   }
 }
 
-.main-images img{
+.main-images img {
   filter: blur(5px);
   width: 100%;
   border-radius: 10px;
@@ -166,7 +173,7 @@ h1 {
   pointer-events: none;
 }
 
-.no-blur img{
+.no-blur img {
   filter: blur(0px);
 }
 
@@ -207,6 +214,7 @@ h1 {
     display: none;
     opacity: 0;
   }
+
   100% {
     display: flex;
     opacity: 1;
@@ -218,7 +226,8 @@ h1 {
   max-width: 300px;
   margin-top: 20px;
   font-size: 14px;
-  line-height: 150%;;
+  line-height: 150%;
+  ;
 }
 
 .message-control {
@@ -270,7 +279,7 @@ h1 {
   font-weight: bold;
 }
 
-.sound-button img{
+.sound-button img {
   width: 60%;
   height: 60%;
   vertical-align: middle;
@@ -281,15 +290,15 @@ h1 {
 }
 
 .sound-disable:before {
-  content:'';
-  position:absolute;
-  display:block;
-  width:60%;
-  height:60%;
-  left:20%;
-  top:20%;
-  background: rgba(0,0,0,0) url(../img/sound/cross.svg) no-repeat;
-  background-size:100% 100%;
+  content: '';
+  position: absolute;
+  display: block;
+  width: 60%;
+  height: 60%;
+  left: 20%;
+  top: 20%;
+  background: rgba(0, 0, 0, 0) url(../img/sound/cross.svg) no-repeat;
+  background-size: 100% 100%;
 }
 
 .game-control {
@@ -318,7 +327,7 @@ h1 {
   color: #fff;
   background-color: rgb(122, 0, 0);
   border-radius: 5px;
-  margin-right: 5px;
+  margin-left: 5px;
 }
 
 @media screen and (orientation: portrait) {
@@ -327,9 +336,9 @@ h1 {
     padding-bottom: 60px;
   }
 
-  .game-info{
-  	width: 90%;
-  	top: 0px;
+  .game-info {
+    width: 90%;
+    top: 0px;
   }
 
   .game-info_box {
@@ -356,24 +365,24 @@ h1 {
     height: 50px;
   }
 
-  .game-control{
-  	width: 90%;
-  	bottom: 0px;
+  .game-control {
+    width: 90%;
+    bottom: 0px;
   }
-  
+
   .menu-button {
-  	width: calc(50% - 5px);
+    width: calc(50% - 5px);
   }
-  
+
   .restart-button {
-  	width: calc(50% - 5px);
+    width: calc(50% - 5px);
   }
 }
 
 @media screen and (orientation: landscape) {
-  .game-info{
-  	width: 100%;
-  	top: 0px;
+  .game-info {
+    width: 100%;
+    top: 0px;
   }
 
   .game-info_box {
@@ -399,25 +408,25 @@ h1 {
     line-height: 55px;
   }
 
-  .game-control{
-  	width: 100%;
+  .game-control {
+    width: 100%;
     bottom: 0px;
   }
-  
+
   .menu-button {
-  	position: absolute;
+    position: absolute;
     width: 120px;
-  	left: 20px;
-  	bottom: 20px;
-  	padding: 16px 0;
+    left: 20px;
+    bottom: 20px;
+    padding: 16px 0;
   }
-  
+
   .restart-button {
-  	position: absolute;
+    position: absolute;
     width: 120px;
-  	right: 20px;
-  	bottom: 20px;
-  	padding: 16px 0;
+    right: 20px;
+    bottom: 20px;
+    padding: 16px 0;
   }
 }
 
@@ -460,7 +469,7 @@ h1 {
   border: 1px solid rgba(0, 0, 0, .1);
 }
 
-.block img{
+.block img {
   pointer-events: none;
   width: 100%;
   height: 100%;
@@ -468,6 +477,6 @@ h1 {
   padding: 0;
 }
 
-.selected img{
+.selected img {
   display: none;
 }
