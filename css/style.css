@@ -307,7 +307,7 @@ h1 {
   color: #fff;
   background-color: #002d8f;
   border-radius: 5px;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .restart-button {
@@ -318,6 +318,7 @@ h1 {
   color: #fff;
   background-color: rgb(122, 0, 0);
   border-radius: 5px;
+  margin-right: 5px;
 }
 
 @media screen and (orientation: portrait) {
@@ -361,11 +362,11 @@ h1 {
   }
   
   .menu-button {
-  	width: calc(50% - 10px);
+  	width: calc(50% - 5px);
   }
   
   .restart-button {
-  	width: 50%;
+  	width: calc(50% - 5px);
   }
 }
 
