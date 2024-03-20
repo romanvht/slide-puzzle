@@ -10,6 +10,7 @@ let gameTable = document.getElementById('tiles');
 let gameMessage = document.querySelector('.message');
 let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
+let audio = new Audio("mp3/click.mp3");
 
 const RIGHT_ARROW = 39;
 const LEFT_ARROW = 37;
@@ -182,7 +183,8 @@ function swap(clicked, no_audio) {
   }
 
   if(!no_audio){
-    const audio = new Audio("mp3/click.mp3");
+    audio.pause();
+    audio.currentTime=0;
     audio.play();
   }
 
