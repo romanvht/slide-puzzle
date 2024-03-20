@@ -267,16 +267,18 @@ function saveGame() {
 }
 
 function restartGame() {
-  gameStart = false;
-  storage.removeItem('state' + level);
+  if(gameStart){
+    gameStart = false;
+    storage.removeItem('state' + level);
 
-  /**** Yandex Ads ****/
-  if (domain.indexOf("yandex") !== -1) {
-    YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+    /**** Yandex Ads ****/
+    if (domain.indexOf("yandex") !== -1) {
+      YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+    }
+    /*** /Yandex Ads ****/
+
+    newGame(level, size, gameImage);
   }
-  /*** /Yandex Ads ****/
-
-  newGame(level, size, gameImage);
 }
 
 function muteGame() {
