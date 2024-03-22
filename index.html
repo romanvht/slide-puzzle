@@ -8,11 +8,11 @@
   <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.2.19">
   <script src="js/levels.js?ver=1.2.19"></script>
   <script>
+    /**** Костыль для SDK ****/
     let domain = document.domain;
     let s = window.location.search.match(new RegExp('mode=([^&=]+)'));
     let mode = s ? s[1] : false;
-
-    /**** Костыль для SDK ****/
+    
     if (domain.indexOf("yandex") !== -1) {
       window.localStorage.setItem('mode', 'yandex');
 
