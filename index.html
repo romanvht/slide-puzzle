@@ -5,11 +5,12 @@
   <meta charset="utf-8">
   <title>Пазлы</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.2.11">
-  <script src="js/levels.js?ver=1.2.11"></script>
-  <script src="https://yandex.ru/games/sdk/v2"></script>
+  <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.2.15">
+  <script src="js/levels.js?ver=1.2.15"></script>
   <script>
     let domain = document.domain;
+    let s = window.location.search.match(new RegExp('mode=([^&=]+)'));
+    let mode = s ? s[1] : false;
 
     window.onload = function () {
       var preloader = document.getElementById('p_prldr');
@@ -19,11 +20,42 @@
         preloader.parentNode.removeChild(preloader);
       }, 200);
 
-      if (domain.indexOf("yandex") !== -1) {
-        YaGames.init().then(ysdk => {
-          ysdk.features.LoadingAPI?.ready();
-        });
+      /**** Костыль для SDK ****/
+      var storage = window.localStorage;
+      var sdk = document.createElement('script');
+
+      if (domain.indexOf("yandex") !== -1 || storage.getItem('mode') == 'yandex') {
+        sdk.src = 'https://yandex.ru/games/sdk/v2';
+        sdk.onload = function() {
+          YaGames.init().then(ysdk => {
+            ysdk.features.LoadingAPI?.ready();
+          });
+        }
+
+        storage.setItem('mode', 'yandex');
+        document.getElementsByTagName('head')[0].appendChild(sdk);
       }
+      
+      if(mode == 'vk' || storage.getItem('mode') == 'vk'){
+        sdk.src = 'https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js';
+        sdk.onload = function() {
+          vkBridge.send("VKWebAppInit", {});
+          vkBridge.send('VKWebAppShowBannerAd', {
+            banner_location: 'bottom'
+          })
+          .then((data) => {
+            if (data.result) console.log('Баннер показан');
+            else console.log('Ошибка при показе баннера');
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
+
+        storage.setItem('mode', 'vk');
+        document.getElementsByTagName('head')[0].appendChild(sdk);
+      }
+      /**** /Костыль для SDK ****/
     };
   </script>
 </head>
@@ -90,7 +122,7 @@
   <audio id="sound">
     <source src="mp3/click.mp3" type="audio/mp3">
   </audio>
-  <script src="js/game.js?ver=1.2.11"></script>
+  <script src="js/game.js?ver=1.2.15"></script>
   <script>
     let getLevel = $_GET('level');
 

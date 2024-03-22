@@ -235,13 +235,22 @@ function swap(clicked) {
         gameDownloadLink.setAttribute('href', gameImage);
       }, 500);
 
-      /**** Yandex Ads ****/
-      if (domain.indexOf("yandex") !== -1) {
+      /**** Ads ****/
+      if (storage.getItem('mode') == 'yandex') {
         setTimeout(function () {
           YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
         }, 2000);
       }
-      /*** /Yandex Ads ****/
+
+      if (storage.getItem('mode') == 'vk') {
+        vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
+        .then((data) => {
+          if (data.result) console.log('Реклама показана');
+          else console.log('Ошибка при показе');
+        })
+        .catch((error) => { console.log(error); });
+      }
+      /*** /Ads ****/
     }
   }
 }
