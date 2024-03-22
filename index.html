@@ -12,6 +12,24 @@
     let s = window.location.search.match(new RegExp('mode=([^&=]+)'));
     let mode = s ? s[1] : false;
 
+    /**** Костыль для SDK ****/
+    if (domain.indexOf("yandex") !== -1) {
+      window.localStorage.setItem('mode', 'yandex');
+
+      var sdk = document.createElement('script');
+      sdk.src = 'https://yandex.ru/games/sdk/v2';
+      document.getElementsByTagName('head')[0].appendChild(sdk);
+    }
+
+    if(mode == 'vk' || window.localStorage.getItem('mode') == 'vk'){
+      window.localStorage.setItem('mode', 'vk');
+
+      var sdk = document.createElement('script');
+      sdk.src = 'https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js';
+      document.getElementsByTagName('head')[0].appendChild(sdk);
+    }
+    /**** /Костыль для SDK ****/
+
     window.onload = function () {
       var preloader = document.getElementById('p_prldr');
       preloader.classList.add('fadeout');
@@ -22,38 +40,25 @@
 
       /**** Костыль для SDK ****/
       var storage = window.localStorage;
-      var sdk = document.createElement('script');
-
-      if (domain.indexOf("yandex") !== -1 || storage.getItem('mode') == 'yandex') {
-        sdk.src = 'https://yandex.ru/games/sdk/v2';
-        sdk.onload = function() {
-          YaGames.init().then(ysdk => {
-            ysdk.features.LoadingAPI?.ready();
-          });
-        }
-
-        document.getElementsByTagName('head')[0].appendChild(sdk);
-        storage.setItem('mode', 'yandex');
+      
+      if (storage.getItem('mode') == 'yandex') {
+        YaGames.init().then(ysdk => {
+          ysdk.features.LoadingAPI?.ready();
+        });
       }
       
-      if(mode == 'vk' || storage.getItem('mode') == 'vk'){
-        sdk.src = 'https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js';
-        sdk.onload = function() {
-          vkBridge.send("VKWebAppInit", {});
-          vkBridge.send('VKWebAppShowBannerAd', {
-            banner_location: 'bottom'
-          })
-          .then((data) => {
-            if (data.result) console.log('Баннер показан');
-            else console.log('Ошибка при показе баннера');
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        }
-
-        document.getElementsByTagName('head')[0].appendChild(sdk);
-        storage.setItem('mode', 'vk');
+      if(storage.getItem('mode') == 'vk'){
+        vkBridge.send("VKWebAppInit", {});
+        vkBridge.send('VKWebAppShowBannerAd', {
+          banner_location: 'bottom'
+        })
+        .then((data) => {
+          if (data.result) console.log('Баннер показан');
+          else console.log('Ошибка при показе баннера');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       }
       /**** /Костыль для SDK ****/
     };
