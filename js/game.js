@@ -243,12 +243,14 @@ function swap(clicked) {
       }
 
       if (storage.getItem('mode') == 'vk') {
-        vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
-          .then((data) => {
-            if (data.result) console.log('Реклама показана');
-            else console.log('Ошибка при показе');
-          })
-          .catch((error) => { console.log(error); });
+        setTimeout(function () {
+          vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
+            .then((data) => {
+              if (data.result) console.log('Реклама показана');
+              else console.log('Ошибка при показе');
+            })
+            .catch((error) => { console.log(error); });
+        }, 2000);
       }
       /*** /Ads ****/
     }
@@ -282,9 +284,7 @@ function restartGame() {
 
     /**** Ads ****/
     if (storage.getItem('mode') == 'yandex') {
-      setTimeout(function () {
-        YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
-      }, 2000);
+      YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
     }
 
     if (storage.getItem('mode') == 'vk') {
