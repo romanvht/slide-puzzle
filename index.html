@@ -32,8 +32,8 @@
           });
         }
 
-        storage.setItem('mode', 'yandex');
         document.getElementsByTagName('head')[0].appendChild(sdk);
+        storage.setItem('mode', 'yandex');
       }
       
       if(mode == 'vk' || storage.getItem('mode') == 'vk'){
@@ -52,8 +52,8 @@
           });
         }
 
-        storage.setItem('mode', 'vk');
         document.getElementsByTagName('head')[0].appendChild(sdk);
+        storage.setItem('mode', 'vk');
       }
       /**** /Костыль для SDK ****/
     };
