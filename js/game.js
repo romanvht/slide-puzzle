@@ -244,11 +244,11 @@ function swap(clicked) {
 
       if (storage.getItem('mode') == 'vk') {
         vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
-        .then((data) => {
-          if (data.result) console.log('Реклама показана');
-          else console.log('Ошибка при показе');
-        })
-        .catch((error) => { console.log(error); });
+          .then((data) => {
+            if (data.result) console.log('Реклама показана');
+            else console.log('Ошибка при показе');
+          })
+          .catch((error) => { console.log(error); });
       }
       /*** /Ads ****/
     }
@@ -276,15 +276,26 @@ function saveGame() {
 }
 
 function restartGame() {
-  if(gameStart){
+  if (gameStart) {
     gameStart = false;
     storage.removeItem('state' + level);
 
-    /**** Yandex Ads ****/
-    if (domain.indexOf("yandex") !== -1) {
-      YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+    /**** Ads ****/
+    if (storage.getItem('mode') == 'yandex') {
+      setTimeout(function () {
+        YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+      }, 2000);
     }
-    /*** /Yandex Ads ****/
+
+    if (storage.getItem('mode') == 'vk') {
+      vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
+        .then((data) => {
+          if (data.result) console.log('Реклама показана');
+          else console.log('Ошибка при показе');
+        })
+        .catch((error) => { console.log(error); });
+    }
+    /*** /Ads ****/
 
     newGame(level, size, gameImage);
   }
