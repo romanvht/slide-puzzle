@@ -120,17 +120,33 @@ h1 {
 }
 
 .main-images {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   text-align: center;
   overflow-y: auto;
   max-width: 1100px;
 }
 
 .main-images a {
+  position: relative;
   display: inline-block;
-  padding: 5px;
   background: rgba(255, 255, 255, .8);
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.cat-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  top: 0px;
+  bottom: 0px;
+  width: 100%;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, .7);
+  font-weight: bold;
+  font-size: 48px;
+  background-color: rgba(0, 0, 0, .5);
 }
 
 @media screen and (orientation: portrait) {
@@ -139,6 +155,10 @@ h1 {
     height: 150px;
     margin: 0px 5px;
     margin-bottom: 10px;
+  }
+
+  .cat-text {
+    font-size: 36px;
   }
 }
 
@@ -152,15 +172,24 @@ h1 {
 }
 
 .main-images img {
-  filter: blur(5px);
   width: 100%;
   border-radius: 10px;
   vertical-align: middle;
   pointer-events: none;
 }
 
-.no-blur img {
-  filter: blur(0px);
+.no-blur::after {
+  position: absolute;
+  content: 'Собран';
+  top: 0px;
+  right: 0px;
+  height: 32px;
+  font-size: 14px;
+  line-height: 32px;
+  background-color: green;
+  color: #fff;
+  padding: 0px 10px;
+  border-radius: 0px 5px 0px 5px;
 }
 
 #tiles {
@@ -314,6 +343,17 @@ h1 {
   background: rgba(0, 0, 0, .5);
   border-radius: 5px;
   margin-left: 5px;
+}
+
+.back-button {
+  display: inline-block;
+  padding: 8px 24px;
+  font-size: 18px;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(0, 0, 0, .5);
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 @media screen and (orientation: portrait) {

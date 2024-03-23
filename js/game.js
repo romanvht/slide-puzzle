@@ -1,12 +1,14 @@
 let level;
+let category;
 let size;
 let step;
 let gameImage;
 let numberOfTiles;
 let highlighted;
+let gameStart;
+
 let storage = window.localStorage;
 
-let gameStart = false;
 let gameTable = document.getElementById('tiles');
 let audio = document.getElementById('sound');
 let gameStepInfo = document.querySelector('.steps-count_info');
@@ -39,8 +41,9 @@ window.addEventListener("resize", function () {
   resizeGame();
 }, false);
 
-function newGame(setLevel, setSize, setImage) {
+function newGame(setLevel, setCategory, setSize, setImage) {
   level = setLevel;
+  category = setCategory;
   size = setSize;
   gameImage = setImage;
   numberOfTiles = size ** 2;
@@ -91,7 +94,7 @@ function drawGame(context, image) {
     rowTile = Math.floor(index / size);
   }
 
-  let save = JSON.parse(storage.getItem('state' + level));
+  let save = JSON.parse(storage.getItem('category_' + category + '_state_' + level));
 
   if (save) {
     gameStart = true;
@@ -99,6 +102,7 @@ function drawGame(context, image) {
     gameStepInfo.textContent = step;
     createTiles(imageArray, save);
   } else {
+    gameStart = false;
     gameStepInfo.textContent = 0;
     createTiles(imageArray);
     shuffle();
@@ -214,48 +218,36 @@ function swap(clicked) {
   }
 
   if (gameStart) {
-    storage.setItem('state' + level, JSON.stringify(saveGame()));
+    storage.setItem('category_' + category + '_state_' + level, JSON.stringify(saveGame()));
 
     if (checkWin()) {
-      let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
+      let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
 
-      winsJSON['level' + level] = {
-        'id': level,
-        'win': true
-      };
+      winsJSON[level] = true;
 
-      storage.setItem('wins', JSON.stringify(winsJSON));
-      storage.removeItem('state' + level);
+      storage.removeItem('category_' + category + '_state_' + level);
+      storage.setItem('category_' + category + '_wins', JSON.stringify(winsJSON));
+
+      let nextLevel = level + 1;
+      gameDownloadLink.setAttribute('href', gameImage);
+      if (nextLevel < numLevels) {
+        gameNextLink.innerHTML = 'Далее';
+        gameNextLink.setAttribute('onclick', 'getLevel(' + nextLevel + ', ' + category + ')');
+      } else {
+        gameNextLink.innerHTML = 'Меню';
+        gameNextLink.setAttribute('onclick', 'getLinks()');
+      }
 
       setTimeout(function () {
-        let nextLevel = level + 1;
-
-        if(nextLevel < numLevels){
-          gameNextLink.innerHTML = 'Далее';
-          gameNextLink.setAttribute('href', '?level=' + nextLevel);
-        }
-        
         gameTable.innerHTML = '<img class="original-image" src="' + gameImage + '">';
         gameMessage.style.display = "flex";
-        gameDownloadLink.setAttribute('href', gameImage);
       }, 500);
 
       /**** Ads ****/
       if (storage.getItem('mode') == 'yandex') {
         setTimeout(function () {
           YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
-        }, 2000);
-      }
-
-      if (storage.getItem('mode') == 'vk') {
-        setTimeout(function () {
-          vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
-            .then((data) => {
-              if (data.result) console.log('Реклама показана');
-              else console.log('Ошибка при показе');
-            })
-            .catch((error) => { console.log(error); });
-        }, 2000);
+        }, 2500);
       }
       /*** /Ads ****/
     }
@@ -285,24 +277,15 @@ function saveGame() {
 function restartGame() {
   if (gameStart) {
     gameStart = false;
-    storage.removeItem('state' + level);
+    storage.removeItem('category_' + category + '_state_' + level);
 
     /**** Ads ****/
     if (storage.getItem('mode') == 'yandex') {
       YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
     }
-
-    if (storage.getItem('mode') == 'vk') {
-      vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
-        .then((data) => {
-          if (data.result) console.log('Реклама показана');
-          else console.log('Ошибка при показе');
-        })
-        .catch((error) => { console.log(error); });
-    }
     /*** /Ads ****/
 
-    newGame(level, size, gameImage);
+    newGame(level, category, size, gameImage);
   }
 }
 

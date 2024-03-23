@@ -6,26 +6,15 @@
   <title>Пазлы</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.2.19">
-  <script src="js/levels.js?ver=1.2.19"></script>
   <script>
     /**** Костыль для SDK ****/
     let domain = document.domain;
-    let s = window.location.search.match(new RegExp('mode=([^&=]+)'));
-    let mode = s ? s[1] : false;
     
     if (domain.indexOf("yandex") !== -1) {
       window.localStorage.setItem('mode', 'yandex');
 
       var sdk = document.createElement('script');
       sdk.src = 'https://yandex.ru/games/sdk/v2';
-      document.getElementsByTagName('head')[0].appendChild(sdk);
-    }
-
-    if(mode == 'vk' || window.localStorage.getItem('mode') == 'vk'){
-      window.localStorage.setItem('mode', 'vk');
-
-      var sdk = document.createElement('script');
-      sdk.src = 'https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js';
       document.getElementsByTagName('head')[0].appendChild(sdk);
     }
     /**** /Костыль для SDK ****/
@@ -39,25 +28,9 @@
       }, 200);
 
       /**** Костыль для SDK ****/
-      var storage = window.localStorage;
-      
-      if (storage.getItem('mode') == 'yandex') {
+      if (window.localStorage.getItem('mode') == 'yandex') {
         YaGames.init().then(ysdk => {
           ysdk.features.LoadingAPI?.ready();
-        });
-      }
-      
-      if(storage.getItem('mode') == 'vk'){
-        vkBridge.send("VKWebAppInit", {});
-        vkBridge.send('VKWebAppShowBannerAd', {
-          banner_location: 'bottom'
-        })
-        .then((data) => {
-          if (data.result) console.log('Баннер показан');
-          else console.log('Ошибка при показе баннера');
-        })
-        .catch((error) => {
-          console.log(error);
         });
       }
       /**** /Костыль для SDK ****/
@@ -77,10 +50,7 @@
     </svg>
   </div>
 
-  <div class="menu">
-    <h1>Выберите<br>изображение</h1>
-    <div class="main-images"></div>
-  </div>
+  <div class="menu"></div>
 
   <div class="game">
     <div class="message">
@@ -91,7 +61,7 @@
         <div class="message-text">
           Вы отлично справились!
           <div class="message-control">
-            <a href="index.html" class="next-button">
+            <a href="#" onclick="getLinks()" class="next-button">
               Меню
             </a>
             <a href="#" class="download-button" download>
@@ -116,7 +86,7 @@
     <div id="tiles"></div>
 
     <div class="game-control">
-      <a href="index.html" class="menu-button">
+      <a href="#" class="menu-button">
         Меню
       </a>
       <a onclick="restartGame()" href="#" class="restart-button">
@@ -127,48 +97,10 @@
   <audio id="sound">
     <source src="mp3/click.mp3" type="audio/mp3">
   </audio>
+  <script src="js/levels.js?ver=1.2.19"></script>
   <script src="js/game.js?ver=1.2.19"></script>
   <script>
-    let getLevel = $_GET('level');
-
-    if (getLevel) {
-      let menu = document.querySelector('.menu');
-      menu.style.display = "none";
-
-      let game = document.querySelector('.game');
-      game.style.display = "flex";
-
-      level = parseInt(getLevel);
-      size = levels[getLevel].size;
-      gameImage = levels[getLevel].image;
-
-      newGame(level, size, gameImage);
-    } else {
-      let levelsContainer = document.querySelector('.main-images');
-
-      for (const key in levels) {
-        let linkLevel = document.createElement('a');
-        linkLevel.href = '?level=' + levels[key].id;
-        linkLevel.classList.add('level' + levels[key].id);
-
-        let imgLevel = document.createElement('img');
-        imgLevel.src = levels[key].image;
-
-        linkLevel.append(imgLevel);
-
-        levelsContainer.append(linkLevel);
-      }
-
-      let storage = window.localStorage;
-      let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
-
-      for (const key in winsJSON) {
-        if (winsJSON[key].win) {
-          let level = document.querySelector('.' + key);
-          level.classList.add("no-blur");
-        }
-      }
-    }
+    getLinks();
   </script>
 </body>
 
