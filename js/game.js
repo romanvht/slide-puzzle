@@ -39,10 +39,10 @@ window.addEventListener("resize", function () {
   resizeGame();
 }, false);
 
-function newGame(level, size, gameImage) {
-  level = level;
-  size = size;
-  gameImage = gameImage;
+function newGame(setLevel, setSize, setImage) {
+  level = setLevel;
+  size = setSize;
+  gameImage = setImage;
   numberOfTiles = size ** 2;
   highlighted = numberOfTiles;
   step = 0;
