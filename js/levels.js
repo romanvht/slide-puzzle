@@ -30,22 +30,20 @@ for (let level = 1; level <= numLevels; level++) {
 }
 
 function viewportToggle(type) {
+  let linksContainer = document.querySelector('.menu');
+  let gameContainer = document.querySelector('.game');
+  let gameMessage = document.querySelector('.message');
+  
   if(type == 'menu'){
-    let linksContainer = document.querySelector('.menu');
     linksContainer.style.display = 'flex';
     linksContainer.innerHTML = '';
-  
-    let gameContainer = document.querySelector('.game');
     gameContainer.style.display = 'none';
   }else{
-    let linksContainer = document.querySelector('.menu');
     linksContainer.style.display = 'none';
     linksContainer.innerHTML = '';
-  
-    let gameContainer = document.querySelector('.game');
     gameContainer.style.display = 'flex';
+    gameMessage.style.display = "none";
   }
-  
 }
 
 function getLinks() {
@@ -130,8 +128,6 @@ function getLevel(level, category) {
 
   let menuButton = document.querySelector('.menu-button');
   menuButton.setAttribute('onclick', 'getLevels(' + categories[category].id + ')');
-  let gameMessage = document.querySelector('.message');
-  gameMessage.style.display = "none";
 
   size = levels[level].size;
   gameImage = 'img/' + categories[category].folder + '/' + levels[level].image;

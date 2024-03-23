@@ -225,18 +225,22 @@ function swap(clicked) {
 
       winsJSON[level] = true;
 
-      storage.setItem('category_' + category + '_wins', JSON.stringify(winsJSON));
       storage.removeItem('category_' + category + '_state_' + level);
+      storage.setItem('category_' + category + '_wins', JSON.stringify(winsJSON));
+
+      let nextLevel = level + 1;
+      gameDownloadLink.setAttribute('href', gameImage);
+      if (nextLevel < numLevels) {
+        gameNextLink.innerHTML = 'Далее';
+        gameNextLink.setAttribute('onclick', 'getLevel(' + nextLevel + ', ' + category + ')');
+      } else {
+        gameNextLink.innerHTML = 'Меню';
+        gameNextLink.setAttribute('onclick', 'getLinks()');
+      }
 
       setTimeout(function () {
-        let nextLevel = level + 1;
         gameTable.innerHTML = '<img class="original-image" src="' + gameImage + '">';
         gameMessage.style.display = "flex";
-        gameDownloadLink.setAttribute('href', gameImage);
-        if(nextLevel < numLevels){
-          gameNextLink.innerHTML = 'Далее';
-          gameNextLink.setAttribute('onclick', 'getLevel(' + nextLevel + ', ' + category + ')');
-        }
       }, 500);
 
       /**** Ads ****/
