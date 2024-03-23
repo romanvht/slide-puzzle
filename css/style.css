@@ -119,6 +119,24 @@ h1 {
   display: none;
 }
 
+.main-links {
+  width: 100%;
+  margin-bottom: 30px;
+  text-align: center;
+  overflow-y: auto;
+  max-width: 1100px;
+}
+
+.main-links a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  padding: 15px;
+  margin: 10px;
+  background: rgba(0, 0, 0, .8);
+  border-radius: 10px;
+}
+
 .main-images {
   margin-bottom: 30px;
   text-align: center;
