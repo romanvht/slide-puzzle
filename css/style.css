@@ -19,6 +19,10 @@ body {
   user-select: none;
 }
 
+a {
+  cursor: pointer;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

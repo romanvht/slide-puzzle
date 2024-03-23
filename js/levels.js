@@ -105,7 +105,7 @@ function getLevels(category) {
 
   let backButton = document.createElement('a');
   backButton.classList.add('back-button');
-  backButton.href = 'index.html';
+  backButton.setAttribute('onclick', 'getLinks()');
   backButton.innerHTML = 'Категории';
 
   linksContainer.append(backButton);
