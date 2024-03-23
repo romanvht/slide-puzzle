@@ -104,3 +104,19 @@ function getLevels(category) {
 
   storage.setItem('category', category);
 }
+
+function getLevel(level) {
+  let storage = window.localStorage;
+  let category = storage.getItem('category');
+
+  let menu = document.querySelector('.menu');
+  menu.style.display = "none";
+
+  let game = document.querySelector('.game');
+  game.style.display = "flex";
+
+  size = levels[level].size;
+  gameImage = 'img/' + categories[category].folder + '/' + levels[level].image;
+
+  newGame(level, size, gameImage);
+}

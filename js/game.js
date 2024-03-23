@@ -39,12 +39,10 @@ window.addEventListener("resize", function () {
   resizeGame();
 }, false);
 
-
-
-function newGame(level, size, gameImage) {
-  level = level;
-  size = size;
-  gameImage = gameImage;
+function newGame(setLevel, setSize, setImage) {
+  level = setLevel;
+  size = setSize;
+  gameImage = setImage;
   numberOfTiles = size ** 2;
   highlighted = numberOfTiles;
   step = 0;
@@ -220,6 +218,7 @@ function swap(clicked) {
 
     if (checkWin()) {
       let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
+      let category = storage.getItem('category') || 1;
 
       winsJSON['level' + level] = {
         'id': level,
@@ -234,13 +233,9 @@ function swap(clicked) {
         gameTable.innerHTML = '<img class="original-image" src="' + gameImage + '">';
         gameMessage.style.display = "flex";
         gameDownloadLink.setAttribute('href', gameImage);
-        console.log(level);
-        console.log(nextLevel);
-        console.log(numLevels);
         if(nextLevel < numLevels){
+          gameNextLink.innerHTML = 'Далее';
           gameNextLink.setAttribute('href', '?level=' + nextLevel);
-        }else{
-          gameNextLink.innerHTML = 'Меню';
         }
       }, 500);
 

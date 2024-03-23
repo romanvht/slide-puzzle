@@ -62,7 +62,7 @@
           Вы отлично справились!
           <div class="message-control">
             <a href="index.html" class="next-button">
-              Далее
+              Меню
             </a>
             <a href="#" class="download-button" download>
               Скачать
@@ -101,23 +101,10 @@
   <script src="js/game.js?ver=1.2.19"></script>
   <script>
     if ($_GET('level')) {
-      let storage = window.localStorage;
-      let category = storage.getItem('category');
       let level = $_GET('level');
-
-      let menu = document.querySelector('.menu');
-      menu.style.display = "none";
-
-      let game = document.querySelector('.game');
-      game.style.display = "flex";
-
-      size = levels[level].size;
-      gameImage = 'img/' + categories[category].folder + '/' + levels[level].image;
-
-      newGame(level, size, gameImage);
+      getLevel(level)
     } else if ($_GET('cat')) {
       let getcategory = $_GET('cat');
-
       getLevels(getcategory);
     } else {
       getLinks();
