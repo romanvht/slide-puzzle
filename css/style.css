@@ -131,6 +131,7 @@ h1 {
   display: inline-block;
   background: rgba(255, 255, 255, .8);
   border-radius: 10px;
+  overflow: hidden;
 }
 
 .cat-text {
