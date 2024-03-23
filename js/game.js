@@ -1,21 +1,24 @@
 let level;
 let category;
 let size;
-let step;
 let gameImage;
 let numberOfTiles;
 let highlighted;
 let gameStart;
+let step;
 
 let storage = window.localStorage;
 
 let gameTable = document.getElementById('tiles');
-let audio = document.getElementById('sound');
+let gameContainer = document.querySelector('.game');
 let gameStepInfo = document.querySelector('.steps-count_info');
 let gameSoundIcon = document.querySelector('.sound-button');
 let gameMessage = document.querySelector('.message');
 let gameNextLink = document.querySelector('.next-button');
 let gameDownloadLink = document.querySelector('.download-button');
+let menuContainer = document.querySelector('.menu');
+let menuButton = document.querySelector('.menu-button');
+let audio = document.getElementById('sound');
 
 let soundOff = storage.getItem('soundOff');
 if (soundOff == 'yes') gameSoundIcon.classList.add('sound-disable');
@@ -41,14 +44,34 @@ window.addEventListener("resize", function () {
   resizeGame();
 }, false);
 
-function newGame(setLevel, setCategory, setSize, setImage) {
+function resizeGame() {
+  let orient = window.matchMedia("(orientation: portrait)");
+
+  if (orient.matches) {
+    let width = gameContainer.clientWidth * 0.9;
+    gameTable.style.width = width + "px";
+    gameTable.style.height = width + "px";
+  } else {
+    let height = gameContainer.clientHeight * 0.9;
+    gameTable.style.width = height + "px";
+    gameTable.style.height = height + "px";
+  }
+}
+
+/**** Create Game ****/
+function newGame(setLevel, setCategory) {
   level = setLevel;
   category = setCategory;
-  size = setSize;
-  gameImage = setImage;
+  size = window.levels[setLevel].size;
+  gameImage = window.categories[setCategory].folder + window.levels[setLevel].image;
   numberOfTiles = size ** 2;
   highlighted = numberOfTiles;
   step = 0;
+
+  menuContainer.style.display = "none";
+  gameContainer.style.display = 'flex';
+  gameMessage.style.display = "none";
+  menuButton.setAttribute('onclick', 'getLevels(' + window.categories[category].id + ')');
 
   let image = new Image();
   let canvas = document.createElement('canvas');
@@ -154,19 +177,9 @@ function cutImage(context, x, y, width, height) {
   contextPart.putImageData(imageData, 0, 0);
   return canvasPart.toDataURL("image/jpeg");
 }
+/**** /Create Game ****/
 
-function resizeGame() {
-  let orient = window.matchMedia("(orientation: portrait)");
-
-  if (orient.matches) {
-    gameTable.style.height = gameTable.offsetWidth + "px";
-    gameTable.style.width = null;
-  } else {
-    gameTable.style.width = gameTable.offsetHeight + "px";
-    gameTable.style.height = null;
-  }
-}
-
+/**** Control Game ****/
 function shuffle() {
   let minShuffles = 100;
   let totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 * size);
@@ -228,14 +241,15 @@ function swap(clicked) {
       storage.removeItem('category_' + category + '_state_' + level);
       storage.setItem('category_' + category + '_wins', JSON.stringify(winsJSON));
 
-      let nextLevel = level + 1;
       gameDownloadLink.setAttribute('href', gameImage);
+
+      let nextLevel = level + 1;
       if (nextLevel < numLevels) {
         gameNextLink.innerHTML = 'Далее';
-        gameNextLink.setAttribute('onclick', 'getLevel(' + nextLevel + ', ' + category + ')');
+        gameNextLink.setAttribute('onclick', 'newGame(' + nextLevel + ', ' + category + ')');
       } else {
         gameNextLink.innerHTML = 'Меню';
-        gameNextLink.setAttribute('onclick', 'getLinks()');
+        gameNextLink.setAttribute('onclick', 'getCategories()');
       }
 
       setTimeout(function () {
@@ -285,7 +299,7 @@ function restartGame() {
     }
     /*** /Ads ****/
 
-    newGame(level, category, size, gameImage);
+    newGame(level, category);
   }
 }
 
@@ -337,3 +351,87 @@ function setSelected(index) {
     gameStepInfo.textContent = step;
   }
 }
+/**** /Control Game ****/
+
+/**** Menu Game ****/
+function menuToggle() {
+  menuContainer.innerHTML = '';
+  menuContainer.style.display = 'flex';
+  gameContainer.style.display = 'none';
+}
+
+function getCategories() {
+  let categories = window.categories;
+
+  menuToggle();
+  
+  let title = document.createElement('h1');
+  title.innerHTML = 'Выберите<br>категорию';
+  menuContainer.append(title);
+
+  let links = document.createElement('div');
+  links.classList.add('main-images');
+
+  for (const key in categories) {
+    let linkCat = document.createElement('a');
+    linkCat.innerHTML = '<div class="cat-text">' + categories[key].name + '</div>';
+    linkCat.setAttribute('onclick', 'getLevels(' + categories[key].id + ')');
+    linkCat.classList.add('cat' + categories[key].id);
+
+    let imgCat = document.createElement('img');
+    imgCat.src =  categories[key].folder + '1.jpg';
+
+    linkCat.append(imgCat);
+
+    links.append(linkCat);
+  }
+
+  menuContainer.append(links);
+}
+
+function getLevels(category) {
+  let levels = window.levels;
+  let categories = window.categories;
+
+  menuToggle();
+  
+  let title = document.createElement('h1');
+  title.innerHTML = 'Выберите<br>изображение';
+  menuContainer.append(title);
+
+  let links = document.createElement('div');
+  links.classList.add('main-images');
+
+  for (const key in levels) {
+    let linkLevel = document.createElement('a');
+    let imgLevel = document.createElement('img');
+    imgLevel.src =  categories[category].folder + levels[key].image;
+    linkLevel.setAttribute('onclick', 'newGame(' + levels[key].id + ', ' +  categories[category].id + ')');
+    linkLevel.classList.add('level' + levels[key].id);
+
+    linkLevel.append(imgLevel);
+
+    links.append(linkLevel);
+  }
+
+  menuContainer.append(links);
+
+  let backButton = document.createElement('a');
+  backButton.classList.add('back-button');
+  backButton.setAttribute('onclick', 'getCategories()');
+  backButton.innerHTML = 'Категории';
+
+  menuContainer.append(backButton);
+
+  let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
+
+  for (const key in winsJSON) {
+    if (winsJSON[key]) {
+      let level = document.querySelector('.level' + key);
+      level.classList.add("no-blur");
+    }
+  }
+
+  storage.setItem('category', category);
+}
+/**** /Menu Game ****/
