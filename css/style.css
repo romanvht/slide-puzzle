@@ -120,7 +120,7 @@ h1 {
 }
 
 .main-images {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   text-align: center;
   overflow-y: auto;
   max-width: 1100px;
@@ -342,6 +342,17 @@ h1 {
   background: rgba(0, 0, 0, .5);
   border-radius: 5px;
   margin-left: 5px;
+}
+
+.back-button {
+  display: inline-block;
+  padding: 8px 24px;
+  font-size: 18px;
+  text-decoration: none;
+  color: #fff;
+  background: rgba(0, 0, 0, .5);
+  border-radius: 5px;
+  margin-bottom: 15px;
 }
 
 @media screen and (orientation: portrait) {

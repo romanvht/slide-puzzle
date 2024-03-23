@@ -5,7 +5,7 @@ let gameImage;
 let numberOfTiles;
 let highlighted;
 let storage = window.localStorage;
-let category = storage.getItem('category') || 1;
+let category = storage.getItem('category');
 
 let gameStart = false;
 let gameTable = document.getElementById('tiles');

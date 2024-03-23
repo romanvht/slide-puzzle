@@ -61,15 +61,6 @@ function getLinks() {
   }
 
   linksContainer.append(links);
-
-  /*let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
-
-  for (const key in winsJSON) {
-    if (winsJSON[key].win) {
-      let level = document.querySelector('.' + key);
-      level.classList.add("no-blur");
-    }
-  }*/
 }
 
 function getLevels(category) {
@@ -98,6 +89,14 @@ function getLevels(category) {
 
   linksContainer.append(links);
 
+  let backButton = document.createElement('a');
+  backButton.classList.add('back-button');
+  backButton.href = 'index.html';
+  backButton.innerHTML = 'Категории';
+
+
+  linksContainer.append(backButton);
+
   let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
 
   for (const key in winsJSON) {
@@ -113,13 +112,16 @@ function getLevels(category) {
 
 function getLevel(level) {
   let storage = window.localStorage;
-  let category = storage.getItem('category');
+  let category = storage.getItem('category') || 1;
 
   let menu = document.querySelector('.menu');
   menu.style.display = "none";
 
   let game = document.querySelector('.game');
   game.style.display = "flex";
+
+  let menuButton = document.querySelector('.menu-button');
+  menuButton.href = "?cat=" + categories[category].id;
 
   size = levels[level].size;
   gameImage = 'img/' + categories[category].folder + '/' + levels[level].image;
