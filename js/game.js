@@ -52,7 +52,7 @@ function resizeGame() {
     gameTable.style.width = width + "px";
     gameTable.style.height = width + "px";
   } else {
-    let height = gameContainer.clientHeight * 0.9;
+    let height = gameContainer.clientHeight * 0.8;
     gameTable.style.width = height + "px";
     gameTable.style.height = height + "px";
   }
