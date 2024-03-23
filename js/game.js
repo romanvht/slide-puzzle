@@ -229,14 +229,15 @@ function swap(clicked) {
 
       setTimeout(function () {
         let nextLevel = level + 1;
+
+        if(nextLevel < numLevels){
+          gameNextLink.innerHTML = 'Далее';
+          gameNextLink.setAttribute('href', '?level=' + nextLevel);
+        }
+        
         gameTable.innerHTML = '<img class="original-image" src="' + gameImage + '">';
         gameMessage.style.display = "flex";
         gameDownloadLink.setAttribute('href', gameImage);
-        if(nextLevel < numLevels){
-          gameNextLink.setAttribute('href', '?level=' + nextLevel);
-        }else{
-          gameNextLink.innerHTML = 'Меню';
-        }
       }, 500);
 
       /**** Ads ****/
