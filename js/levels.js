@@ -29,15 +29,29 @@ for (let level = 1; level <= numLevels; level++) {
   }
 }
 
-function $_GET(key) {
-  let s = window.location.search;
-  s = s.match(new RegExp(key + '=([^&=]+)'));
-  return s ? parseInt(s[1]) : false;
+function viewportToggle(type) {
+  if(type == 'menu'){
+    let linksContainer = document.querySelector('.menu');
+    linksContainer.style.display = 'flex';
+    linksContainer.innerHTML = '';
+  
+    let gameContainer = document.querySelector('.game');
+    gameContainer.style.display = 'none';
+  }else{
+    let linksContainer = document.querySelector('.menu');
+    linksContainer.style.display = 'none';
+    linksContainer.innerHTML = '';
+  
+    let gameContainer = document.querySelector('.game');
+    gameContainer.style.display = 'flex';
+  }
+  
 }
 
 function getLinks() {
-  let storage = window.localStorage;
   let linksContainer = document.querySelector('.menu');
+
+  viewportToggle('menu');
   
   let title = document.createElement('h1');
   title.innerHTML = 'Выберите<br>категорию';
@@ -49,7 +63,7 @@ function getLinks() {
   for (const key in categories) {
     let linkCat = document.createElement('a');
     linkCat.innerHTML = '<div class="cat-text">' + categories[key].name + '</div>';
-    linkCat.href = '?cat=' + categories[key].id;
+    linkCat.setAttribute('onclick', 'getLevels(' + categories[key].id + ')');
     linkCat.classList.add('cat' + categories[key].id);
 
     let imgCat = document.createElement('img');
@@ -66,6 +80,8 @@ function getLinks() {
 function getLevels(category) {
   let storage = window.localStorage;
   let linksContainer = document.querySelector('.menu');
+
+  viewportToggle('menu');
   
   let title = document.createElement('h1');
   title.innerHTML = 'Выберите<br>изображение';
@@ -76,7 +92,7 @@ function getLevels(category) {
 
   for (const key in levels) {
     let linkLevel = document.createElement('a');
-    linkLevel.href = '?level=' + levels[key].id;
+    linkLevel.setAttribute('onclick', 'getLevel(' + levels[key].id + ', ' +  categories[category].id + ')');
     linkLevel.classList.add('level' + levels[key].id);
 
     let imgLevel = document.createElement('img');
@@ -94,7 +110,6 @@ function getLevels(category) {
   backButton.href = 'index.html';
   backButton.innerHTML = 'Категории';
 
-
   linksContainer.append(backButton);
 
   let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
@@ -110,21 +125,16 @@ function getLevels(category) {
   storage.setItem('category', category);
 }
 
-function getLevel(level) {
-  let storage = window.localStorage;
-  let category = storage.getItem('category') || 1;
-
-  let menu = document.querySelector('.menu');
-  menu.style.display = "none";
-
-  let game = document.querySelector('.game');
-  game.style.display = "flex";
+function getLevel(level, category) {
+  viewportToggle('game');
 
   let menuButton = document.querySelector('.menu-button');
-  menuButton.href = "?cat=" + categories[category].id;
+  menuButton.setAttribute('onclick', 'getLevels(' + categories[category].id + ')');
+  let gameMessage = document.querySelector('.message');
+  gameMessage.style.display = "none";
 
   size = levels[level].size;
   gameImage = 'img/' + categories[category].folder + '/' + levels[level].image;
 
-  newGame(level, size, gameImage);
+  newGame(level, category, size, gameImage);
 }

@@ -61,7 +61,7 @@
         <div class="message-text">
           Вы отлично справились!
           <div class="message-control">
-            <a href="index.html" class="next-button">
+            <a href="#" onclick="getLinks()" class="next-button">
               Меню
             </a>
             <a href="#" class="download-button" download>
@@ -86,7 +86,7 @@
     <div id="tiles"></div>
 
     <div class="game-control">
-      <a href="index.html" class="menu-button">
+      <a href="#" class="menu-button">
         Меню
       </a>
       <a onclick="restartGame()" href="#" class="restart-button">
@@ -100,15 +100,7 @@
   <script src="js/levels.js?ver=1.2.19"></script>
   <script src="js/game.js?ver=1.2.19"></script>
   <script>
-    if ($_GET('level')) {
-      let level = $_GET('level');
-      getLevel(level)
-    } else if ($_GET('cat')) {
-      let getcategory = $_GET('cat');
-      getLevels(getcategory);
-    } else {
-      getLinks();
-    }
+    getLinks();
   </script>
 </body>
 

@@ -1,13 +1,14 @@
 let level;
+let category;
 let size;
 let step;
 let gameImage;
 let numberOfTiles;
 let highlighted;
-let storage = window.localStorage;
-let category = storage.getItem('category');
+let gameStart;
 
-let gameStart = false;
+let storage = window.localStorage;
+
 let gameTable = document.getElementById('tiles');
 let audio = document.getElementById('sound');
 let gameStepInfo = document.querySelector('.steps-count_info');
@@ -40,8 +41,9 @@ window.addEventListener("resize", function () {
   resizeGame();
 }, false);
 
-function newGame(setLevel, setSize, setImage) {
+function newGame(setLevel, setCategory, setSize, setImage) {
   level = setLevel;
+  category = setCategory;
   size = setSize;
   gameImage = setImage;
   numberOfTiles = size ** 2;
@@ -100,6 +102,7 @@ function drawGame(context, image) {
     gameStepInfo.textContent = step;
     createTiles(imageArray, save);
   } else {
+    gameStart = false;
     gameStepInfo.textContent = 0;
     createTiles(imageArray);
     shuffle();
@@ -232,7 +235,7 @@ function swap(clicked) {
         gameDownloadLink.setAttribute('href', gameImage);
         if(nextLevel < numLevels){
           gameNextLink.innerHTML = 'Далее';
-          gameNextLink.setAttribute('href', '?level=' + nextLevel);
+          gameNextLink.setAttribute('onclick', 'getLevel(' + nextLevel + ', ' + category + ')');
         }
       }, 500);
 
@@ -240,7 +243,7 @@ function swap(clicked) {
       if (storage.getItem('mode') == 'yandex') {
         setTimeout(function () {
           YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
-        }, 2000);
+        }, 2500);
       }
       /*** /Ads ****/
     }
@@ -270,7 +273,7 @@ function saveGame() {
 function restartGame() {
   if (gameStart) {
     gameStart = false;
-    storage.removeItem('state' + level);
+    storage.removeItem('category_' + category + '_state_' + level);
 
     /**** Ads ****/
     if (storage.getItem('mode') == 'yandex') {
@@ -278,7 +281,7 @@ function restartGame() {
     }
     /*** /Ads ****/
 
-    newGame(level, size, gameImage);
+    newGame(level, category, size, gameImage);
   }
 }
 
