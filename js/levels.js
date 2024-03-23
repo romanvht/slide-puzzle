@@ -44,13 +44,18 @@ function getLinks() {
   linksContainer.append(title);
 
   let links = document.createElement('div');
-  links.classList.add('main-links');
+  links.classList.add('main-images');
 
   for (const key in categories) {
     let linkCat = document.createElement('a');
-    linkCat.innerHTML = categories[key].name;
+    linkCat.innerHTML = '<div class="cat-text">' + categories[key].name + '</div>';
     linkCat.href = '?cat=' + categories[key].id;
     linkCat.classList.add('cat' + categories[key].id);
+
+    let imgCat = document.createElement('img');
+    imgCat.src =  'img/' + categories[key].folder + '/1.jpg';
+
+    linkCat.append(imgCat);
 
     links.append(linkCat);
   }
@@ -93,11 +98,12 @@ function getLevels(category) {
 
   linksContainer.append(links);
 
-  let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
+  let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
 
   for (const key in winsJSON) {
-    if (winsJSON[key].win) {
-      let level = document.querySelector('.' + key);
+    console.log(key);
+    if (winsJSON[key]) {
+      let level = document.querySelector('.level' + key);
       level.classList.add("no-blur");
     }
   }

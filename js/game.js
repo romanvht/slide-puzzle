@@ -5,6 +5,7 @@ let gameImage;
 let numberOfTiles;
 let highlighted;
 let storage = window.localStorage;
+let category = storage.getItem('category') || 1;
 
 let gameStart = false;
 let gameTable = document.getElementById('tiles');
@@ -91,7 +92,7 @@ function drawGame(context, image) {
     rowTile = Math.floor(index / size);
   }
 
-  let save = JSON.parse(storage.getItem('state' + level));
+  let save = JSON.parse(storage.getItem('category_' + category + '_state_' + level));
 
   if (save) {
     gameStart = true;
@@ -214,19 +215,15 @@ function swap(clicked) {
   }
 
   if (gameStart) {
-    storage.setItem('state' + level, JSON.stringify(saveGame()));
+    storage.setItem('category_' + category + '_state_' + level, JSON.stringify(saveGame()));
 
     if (checkWin()) {
-      let winsJSON = JSON.parse(storage.getItem('wins') || '{}');
-      let category = storage.getItem('category') || 1;
+      let winsJSON = JSON.parse(storage.getItem('category_' + category + '_wins') || '{}');
 
-      winsJSON['level' + level] = {
-        'id': level,
-        'win': true
-      };
+      winsJSON[level] = true;
 
-      storage.setItem('wins', JSON.stringify(winsJSON));
-      storage.removeItem('state' + level);
+      storage.setItem('category_' + category + '_wins', JSON.stringify(winsJSON));
+      storage.removeItem('category_' + category + '_state_' + level);
 
       setTimeout(function () {
         let nextLevel = level + 1;
