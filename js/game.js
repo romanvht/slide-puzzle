@@ -68,11 +68,6 @@ function newGame(setLevel, setCategory) {
   highlighted = numberOfTiles;
   step = 0;
 
-  menuContainer.style.display = "none";
-  gameContainer.style.display = 'flex';
-  gameMessage.style.display = "none";
-  menuButton.setAttribute('onclick', 'getLevels(' + window.categories[category].id + ')');
-
   let image = new Image();
   let canvas = document.createElement('canvas');
   let context = canvas.getContext('2d', {
@@ -85,7 +80,12 @@ function newGame(setLevel, setCategory) {
     canvas.height = image.height;
     context.drawImage(image, 0, 0);
 
+    menuContainer.style.display = "none";
+    gameMessage.style.display = "none";
+    gameContainer.style.display = 'flex';
+    menuButton.setAttribute('onclick', 'getLevels(' + window.categories[category].id + ')');
     gameTable.innerHTML = '';
+
     drawGame(context, image);
     resizeGame();
   };
