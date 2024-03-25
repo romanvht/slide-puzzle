@@ -19,7 +19,7 @@ const UP_ARROW = 40;
 const DOWN_ARROW = 38;
 
 window.onkeydown = function (event) {
-  if(typeof game !== 'undefined' && game.start == true){
+  if (typeof game !== 'undefined' && game.start == true) {
     if (event.keyCode === RIGHT_ARROW) {
       swap(game.highlighted - 1);
     } else if (event.keyCode === LEFT_ARROW) {
@@ -95,8 +95,8 @@ function drawGame(context, image) {
   for (let index = 1; index <= game.numberOfTiles; index++) {
     let imgTile = document.createElement('img');
     let imgSize = image.width / game.size;
-    let imgWidthCut = image.width /  game.size * cellTile;
-    let imgHeightCut = image.height /  game.size * rowTile;
+    let imgWidthCut = image.width / game.size * cellTile;
+    let imgHeightCut = image.height / game.size * rowTile;
 
     imgTile.src = cutImage(context, imgWidthCut, imgHeightCut, imgSize, imgSize);
     imgTile.number = index;
@@ -108,17 +108,17 @@ function drawGame(context, image) {
       'image': imgTile
     });
 
-    if (cellTile >=  game.size - 1) cellTile = 0;
+    if (cellTile >= game.size - 1) cellTile = 0;
     else cellTile++;
-    rowTile = Math.floor(index /  game.size);
+    rowTile = Math.floor(index / game.size);
   }
 
-  let save = JSON.parse(storage.getItem('category_' +  game.category + '_state_' + game.level));
+  let save = JSON.parse(storage.getItem('category_' + game.category + '_state_' + game.level));
 
   if (save) {
     game.start = true;
     game.step = save.steps;
-    gameStepInfo.textContent =  game.step;
+    gameStepInfo.textContent = game.step;
     createTiles(imageArray, save);
   } else {
     game.start = false;
@@ -178,7 +178,7 @@ function cutImage(context, x, y, width, height) {
 /**** Control Game ****/
 function shuffle() {
   let minShuffles = 100;
-  let totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 *  game.size);
+  let totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 * game.size);
 
   gameContainer.style.pointerEvents = "none";
 
@@ -216,7 +216,7 @@ function swap(clicked) {
   }
 
   if (clicked == game.highlighted + 1) {
-    if (clicked %  game.size != 1) {
+    if (clicked % game.size != 1) {
       setSelected(clicked);
     }
   } else if (clicked == game.highlighted - 1) {
@@ -259,7 +259,7 @@ function swap(clicked) {
       /**** Ads ****/
       if (storage.getItem('mode') == 'yandex') {
         setTimeout(function () {
-          YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+          window.ysdk.adv.showFullscreenAdv();
         }, 2500);
       }
       /*** /Ads ****/
@@ -294,7 +294,7 @@ function restartGame() {
 
     /**** Ads ****/
     if (storage.getItem('mode') == 'yandex') {
-      YaGames.init().then(ysdk => ysdk.adv.showFullscreenAdv());
+      window.ysdk.adv.showFullscreenAdv();
     }
     /*** /Ads ****/
 
@@ -364,7 +364,7 @@ function getCategories() {
   let categories = window.categories;
 
   menuToggle();
-  
+
   /*** Create Elements ***/
   let title = document.createElement('h1');
   title.innerHTML = 'Выберите<br>категорию';
@@ -381,7 +381,7 @@ function getCategories() {
     linkCat.classList.add('cat' + categories[key].id);
 
     let imgCat = document.createElement('img');
-    imgCat.src =  categories[key].folder + '1.jpg';
+    imgCat.src = categories[key].folder + '1.jpg';
 
     linkCat.append(imgCat);
 
@@ -414,8 +414,8 @@ function getLevels(category) {
   for (const key in levels) {
     let linkLevel = document.createElement('a');
     let imgLevel = document.createElement('img');
-    imgLevel.src =  categories[category].folder + levels[key].image;
-    linkLevel.setAttribute('onclick', 'newGame(' + levels[key].id + ', ' +  categories[category].id + ')');
+    imgLevel.src = categories[category].folder + levels[key].image;
+    linkLevel.setAttribute('onclick', 'newGame(' + levels[key].id + ', ' + categories[category].id + ')');
     linkLevel.classList.add('level' + levels[key].id);
     linkLevel.append(imgLevel);
     links.append(linkLevel);
