@@ -30,7 +30,7 @@ window.onkeydown = function (event) {
       swap(game.highlighted + game.size);
     }
   }
-};
+}
 
 window.addEventListener("resize", function () {
   resizeGame();
@@ -84,7 +84,7 @@ function newGame(setLevel, setCategory) {
 
     drawGame(context, image);
     resizeGame();
-  };
+  }
 }
 
 function drawGame(context, image) {
