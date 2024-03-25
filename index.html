@@ -9,33 +9,48 @@
   <script>
     /**** Костыль для SDK ****/
     let domain = document.domain;
-    
+
     if (domain.indexOf("yandex") !== -1) {
       window.localStorage.setItem('mode', 'yandex');
 
-      var sdk = document.createElement('script');
+      let sdk = document.createElement('script');
       sdk.src = 'https://yandex.ru/games/sdk/v2';
       document.getElementsByTagName('head')[0].appendChild(sdk);
     }
     /**** /Костыль для SDK ****/
 
     window.onload = function () {
-      var preloader = document.getElementById('p_prldr');
+      if (window.localStorage.getItem('mode') == 'yandex') {
+        YaGames.init().then(ysdk => {
+          ysdk.adv.showFullscreenAdv({
+            callbacks: {
+              onOpen: () => {
+                removePreloader()
+              },
+              onOffline: () => {
+                removePreloader()
+              },
+              onError: () => {
+                removePreloader()
+              }
+            }
+          });
+
+          ysdk.features.LoadingAPI?.ready();
+        });
+      } else {
+        removePreloader()
+      }
+    }
+
+    function removePreloader() {
+      let preloader = document.getElementById('p_prldr');
       preloader.classList.add('fadeout');
 
       setTimeout(function () {
         preloader.parentNode.removeChild(preloader);
       }, 200);
-
-      /**** Костыль для SDK ****/
-      if (window.localStorage.getItem('mode') == 'yandex') {
-        YaGames.init().then(ysdk => {
-          ysdk.adv.showFullscreenAdv();
-          ysdk.features.LoadingAPI?.ready();
-        });
-      }
-      /**** /Костыль для SDK ****/
-    };
+    }
   </script>
 </head>
 
@@ -43,10 +58,10 @@
   <div id="p_prldr">
     <svg width="38" height="38" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
       <g fill="none" fill-rule="evenodd">
-          <g transform="translate(1 1)" stroke-width="2">
-              <circle stroke-opacity=".5" cx="18" cy="18" r="18"/>
-              <path d="M36 18c0-9.94-8.06-18-18-18"/>
-          </g>
+        <g transform="translate(1 1)" stroke-width="2">
+          <circle stroke-opacity=".5" cx="18" cy="18" r="18" />
+          <path d="M36 18c0-9.94-8.06-18-18-18" />
+        </g>
       </g>
     </svg>
   </div>
