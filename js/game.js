@@ -80,10 +80,10 @@ function newGame(setLevel, setCategory) {
     canvas.height = image.height;
     context.drawImage(image, 0, 0);
 
-    menuContainer.style.display = "none";
-    gameMessage.style.display = "none";
-    gameContainer.style.display = 'flex';
     menuButton.setAttribute('onclick', 'getLevels(' + window.categories[category].id + ')');
+    menuContainer.style.display = "none";
+    gameContainer.style.display = 'flex';
+    gameMessage.style.display = "none";
     gameTable.innerHTML = '';
 
     drawGame(context, image);
