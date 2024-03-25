@@ -235,7 +235,7 @@ function swap(clicked) {
     if (checkWin()) {
       let winsJSON = JSON.parse(storage.getItem('category_' + game.category + '_wins') || '{}');
 
-      winsJSON[level] = true;
+      winsJSON[game.level] = true;
 
       storage.removeItem('category_' + game.category + '_state_' + game.level);
       storage.setItem('category_' + game.category + '_wins', JSON.stringify(winsJSON));

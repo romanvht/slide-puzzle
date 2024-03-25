@@ -2,8 +2,8 @@ window.levels = [];
 window.categories = [];
 
 let numLevels = 16;
-let levelSize = 3;
-let sizeUp = 4;
+let levelSize = 2;
+let sizeUp = 0;
 
 window.categories[1] = {
   "id": 1,
