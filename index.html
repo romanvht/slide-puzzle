@@ -30,6 +30,7 @@
       /**** Костыль для SDK ****/
       if (window.localStorage.getItem('mode') == 'yandex') {
         YaGames.init().then(ysdk => {
+          ysdk.adv.showFullscreenAdv();
           ysdk.features.LoadingAPI?.ready();
         });
       }
