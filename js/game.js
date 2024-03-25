@@ -176,6 +176,8 @@ function shuffle() {
   let minShuffles = 100;
   let totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 *  game.size);
 
+  gameContainer.style.pointerEvents = "none";
+
   for (let i = minShuffles; i <= totalShuffles; i++) {
     setTimeout(function timer() {
       let x = Math.floor(Math.random() * 4);
@@ -191,6 +193,7 @@ function shuffle() {
       }
       swap(direction);
       if (i >= totalShuffles) {
+        gameContainer.style.pointerEvents = "auto";
         game.gameStart = true;
       }
     }, i * 5);
