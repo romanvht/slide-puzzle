@@ -19,14 +19,16 @@ const UP_ARROW = 40;
 const DOWN_ARROW = 38;
 
 window.onkeydown = function (event) {
-  if (event.keyCode === RIGHT_ARROW) {
-    swap(highlighted - 1);
-  } else if (event.keyCode === LEFT_ARROW) {
-    swap(highlighted + 1);
-  } else if (event.keyCode === UP_ARROW) {
-    swap(highlighted - game.size);
-  } else if (event.keyCode === DOWN_ARROW) {
-    swap(highlighted + game.size);
+  if(typeof game !== 'undefined' && game.start == true){
+    if (event.keyCode === RIGHT_ARROW) {
+      swap(game.highlighted - 1);
+    } else if (event.keyCode === LEFT_ARROW) {
+      swap(game.highlighted + 1);
+    } else if (event.keyCode === UP_ARROW) {
+      swap(game.highlighted - game.size);
+    } else if (event.keyCode === DOWN_ARROW) {
+      swap(game.highlighted + game.size);
+    }
   }
 };
 
@@ -50,16 +52,18 @@ function resizeGame() {
 
 /**** Create Game ****/
 function newGame(setLevel, setCategory) {
+  /*** Create Game Obj ***/
   window.game = {
     level: setLevel,
     category: setCategory,
-    size: window.levels[setLevel].size,
-    gameImage: window.categories[setCategory].folder + window.levels[setLevel].image,
-    numberOfTiles: window.levels[setLevel].size ** 2,
-    highlighted: window.levels[setLevel].size ** 2,
-    gameStart: false,
+    size: levels[setLevel].size,
+    gameImage: categories[setCategory].folder + levels[setLevel].image,
+    numberOfTiles: levels[setLevel].size ** 2,
+    highlighted: levels[setLevel].size ** 2,
+    start: false,
     step: 0
   }
+  /*** /Create Game Obj ***/
 
   let image = new Image();
   let canvas = document.createElement('canvas');
@@ -112,12 +116,12 @@ function drawGame(context, image) {
   let save = JSON.parse(storage.getItem('category_' +  game.category + '_state_' + game.level));
 
   if (save) {
-    game.gameStart = true;
+    game.start = true;
     game.step = save.steps;
     gameStepInfo.textContent =  game.step;
     createTiles(imageArray, save);
   } else {
-    game.gameStart = false;
+    game.start = false;
     gameStepInfo.textContent = 0;
     createTiles(imageArray);
     shuffle();
@@ -194,7 +198,7 @@ function shuffle() {
       swap(direction);
       if (i >= totalShuffles) {
         gameContainer.style.pointerEvents = "auto";
-        game.gameStart = true;
+        game.start = true;
       }
     }, i * 5);
   }
@@ -205,7 +209,7 @@ function swap(clicked) {
     return;
   }
 
-  if (game.gameStart && !soundOff) {
+  if (game.start && !soundOff) {
     audio.pause();
     audio.currentTime = 0;
     audio.play();
@@ -225,7 +229,7 @@ function swap(clicked) {
     setSelected(clicked);
   }
 
-  if (game.gameStart) {
+  if (game.start) {
     storage.setItem('category_' + game.category + '_state_' + game.level, JSON.stringify(saveGame()));
 
     if (checkWin()) {
@@ -277,15 +281,15 @@ function saveGame() {
   let gameState = {};
   gameState.table = saveArray;
   gameState.highlighted = game.highlighted;
-  gameState.gameStart = game.gameStart;
+  gameState.start = game.start;
   gameState.steps = game.step;
 
   return gameState;
 }
 
 function restartGame() {
-  if (game.gameStart) {
-    game.gameStart = false;
+  if (game.start) {
+    game.start = false;
     storage.removeItem('category_' + game.category + '_state_' + game.level);
 
     /**** Ads ****/
@@ -341,7 +345,7 @@ function setSelected(index) {
   newTile.setAttribute('number', currentTileNumber);
 
   game.highlighted = index;
-  if (game.gameStart) {
+  if (game.start) {
     game.step++;
     gameStepInfo.textContent = game.step;
   }
@@ -353,6 +357,7 @@ function menuToggle() {
   menuContainer.innerHTML = '';
   menuContainer.style.display = 'flex';
   gameContainer.style.display = 'none';
+  game = false;
 }
 
 function getCategories() {
