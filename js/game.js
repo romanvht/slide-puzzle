@@ -1,55 +1,3 @@
-let storage = window.localStorage;
-let gameContainer = document.querySelector('.game');
-let gameTable = document.getElementById('tiles');
-let gameStepInfo = document.querySelector('.steps-count_info');
-let gameSoundIcon = document.querySelector('.sound-button');
-let gameMessage = document.querySelector('.message');
-let gameNextLink = document.querySelector('.next-button');
-let gameDownloadLink = document.querySelector('.download-button');
-let menuContainer = document.querySelector('.menu');
-let menuButton = document.querySelector('.menu-button');
-let audio = document.getElementById('sound');
-
-let soundOff = storage.getItem('soundOff');
-if (soundOff == 'yes') gameSoundIcon.classList.add('sound-disable');
-
-const RIGHT_ARROW = 39;
-const LEFT_ARROW = 37;
-const UP_ARROW = 40;
-const DOWN_ARROW = 38;
-
-window.onkeydown = function (event) {
-  if (typeof game !== 'undefined' && game.start == true) {
-    if (event.keyCode === RIGHT_ARROW) {
-      swap(game.highlighted - 1);
-    } else if (event.keyCode === LEFT_ARROW) {
-      swap(game.highlighted + 1);
-    } else if (event.keyCode === UP_ARROW) {
-      swap(game.highlighted - game.size);
-    } else if (event.keyCode === DOWN_ARROW) {
-      swap(game.highlighted + game.size);
-    }
-  }
-}
-
-window.addEventListener("resize", function () {
-  resizeGame();
-}, false);
-
-function resizeGame() {
-  let orient = window.matchMedia("(orientation: portrait)");
-
-  if (orient.matches) {
-    let width = gameContainer.clientWidth * 0.9;
-    gameTable.style.width = width + "px";
-    gameTable.style.height = width + "px";
-  } else {
-    let height = gameContainer.clientHeight * 0.8;
-    gameTable.style.width = height + "px";
-    gameTable.style.height = height + "px";
-  }
-}
-
 /**** Create Game ****/
 function newGame(setLevel, setCategory) {
   /*** Create Game Obj ***/
@@ -267,6 +215,31 @@ function swap(clicked) {
   }
 }
 
+function setSelected(index) {
+  currentTile = document.getElementById(`block${game.highlighted}`);
+  newTile = document.getElementById(`block${index}`);
+
+  currentTileHtml = currentTile.innerHTML;
+  currentTileNumber = currentTile.getAttribute('number');
+
+  newTileHtml = newTile.innerHTML;
+  newTileNumber = newTile.getAttribute('number');
+
+  currentTile.classList.remove('selected');
+  currentTile.innerHTML = newTileHtml;
+  currentTile.setAttribute('number', newTileNumber);
+
+  newTile.classList.add("selected");
+  newTile.innerHTML = currentTileHtml;
+  newTile.setAttribute('number', currentTileNumber);
+
+  game.highlighted = index;
+  if (game.start) {
+    game.step++;
+    gameStepInfo.textContent = game.step;
+  }
+}
+
 function saveGame() {
   let saveArray = [];
   for (let index = 1; index <= game.numberOfTiles; index++) {
@@ -325,112 +298,4 @@ function checkWin() {
   }
   return true;
 }
-
-function setSelected(index) {
-  currentTile = document.getElementById(`block${game.highlighted}`);
-  newTile = document.getElementById(`block${index}`);
-
-  currentTileHtml = currentTile.innerHTML;
-  currentTileNumber = currentTile.getAttribute('number');
-
-  newTileHtml = newTile.innerHTML;
-  newTileNumber = newTile.getAttribute('number');
-
-  currentTile.classList.remove('selected');
-  currentTile.innerHTML = newTileHtml;
-  currentTile.setAttribute('number', newTileNumber);
-
-  newTile.classList.add("selected");
-  newTile.innerHTML = currentTileHtml;
-  newTile.setAttribute('number', currentTileNumber);
-
-  game.highlighted = index;
-  if (game.start) {
-    game.step++;
-    gameStepInfo.textContent = game.step;
-  }
-}
 /**** /Control Game ****/
-
-/**** Menu Game ****/
-function menuToggle() {
-  menuContainer.innerHTML = '';
-  menuContainer.style.display = 'flex';
-  gameContainer.style.display = 'none';
-  game = false;
-}
-
-function getCategories() {
-  let categories = window.categories;
-
-  menuToggle();
-
-  /*** Create Elements ***/
-  let title = document.createElement('h1');
-  title.innerHTML = 'Выберите<br>категорию';
-  menuContainer.append(title);
-
-  let links = document.createElement('div');
-  links.classList.add('main-images');
-  /*** /Create Elements ***/
-
-  for (const key in categories) {
-    let linkCat = document.createElement('a');
-    linkCat.innerHTML = '<div class="cat-text">' + categories[key].name + '</div>';
-    linkCat.setAttribute('onclick', 'getLevels(' + categories[key].id + ')');
-    linkCat.classList.add('cat' + categories[key].id);
-
-    let imgCat = document.createElement('img');
-    imgCat.src = categories[key].folder + '1.jpg';
-
-    linkCat.append(imgCat);
-
-    links.append(linkCat);
-  }
-
-  menuContainer.append(links);
-}
-
-function getLevels(category) {
-  let levels = window.levels;
-  let categories = window.categories;
-
-  menuToggle();
-
-  /*** Create Elements ***/
-  let title = document.createElement('h1');
-  title.innerHTML = 'Выберите<br>изображение';
-  menuContainer.append(title);
-
-  let links = document.createElement('div');
-  links.classList.add('main-images');
-
-  let backButton = document.createElement('a');
-  backButton.classList.add('back-button');
-  backButton.setAttribute('onclick', 'getCategories()');
-  backButton.innerHTML = 'Категории';
-  /*** /Create Elements ***/
-
-  for (const key in levels) {
-    let linkLevel = document.createElement('a');
-    let imgLevel = document.createElement('img');
-    imgLevel.src = categories[category].folder + levels[key].image;
-    linkLevel.setAttribute('onclick', 'newGame(' + levels[key].id + ', ' + categories[category].id + ')');
-    linkLevel.classList.add('level' + levels[key].id);
-    linkLevel.append(imgLevel);
-    links.append(linkLevel);
-  }
-
-  menuButton.setAttribute('onclick', 'getLevels(' + categories[category].id + ')');
-  menuContainer.append(links);
-  menuContainer.append(backButton);
-
-  let winsJSON = JSON.parse(storage.getItem('category_' + categories[category].id + '_wins') || '{}');
-  for (const key in winsJSON) {
-    if (winsJSON[key]) {
-      let level = document.querySelector('.level' + key);
-      level.classList.add("no-blur");
-    }
-  }
-}
-/**** /Menu Game ****/
