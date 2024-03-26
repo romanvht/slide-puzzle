@@ -240,6 +240,18 @@ function setSelected(index) {
   }
 }
 
+function checkWin() {
+  for (let index = 1; index <= game.numberOfTiles; index++) {
+    currentTile = document.getElementById(`block${index}`);
+    currentTileIndex = currentTile.getAttribute('index');
+    currentTileValue = currentTile.getAttribute('number');
+    if (parseInt(currentTileIndex) != parseInt(currentTileValue)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function saveGame() {
   let saveArray = [];
   for (let index = 1; index <= game.numberOfTiles; index++) {
@@ -285,17 +297,5 @@ function muteGame() {
     storage.setItem('soundOff', 'yes');
     soundOff = true;
   }
-}
-
-function checkWin() {
-  for (let index = 1; index <= game.numberOfTiles; index++) {
-    currentTile = document.getElementById(`block${index}`);
-    currentTileIndex = currentTile.getAttribute('index');
-    currentTileValue = currentTile.getAttribute('number');
-    if (parseInt(currentTileIndex) != parseInt(currentTileValue)) {
-      return false;
-    }
-  }
-  return true;
 }
 /**** /Control Game ****/
