@@ -193,7 +193,13 @@ function swap(clicked) {
       let nextLevel = game.level + 1;
       if (nextLevel < numLevels) {
         gameNextLink.innerHTML = 'Далее';
-        gameNextLink.setAttribute('onclick', 'newGame(' + nextLevel + ', ' + game.category + ')');
+        /**** Ads ****/
+        if (storage.getItem('mode') == 'yandex') {
+          gameNextLink.setAttribute('onclick', 'window.ysdk.adv.showFullscreenAdv();newGame(' + nextLevel + ', ' + game.category + ')');
+        }else{
+          gameNextLink.setAttribute('onclick', 'newGame(' + nextLevel + ', ' + game.category + ')');
+        }
+        /*** /Ads ****/
       } else {
         gameNextLink.innerHTML = 'Меню';
         gameNextLink.setAttribute('onclick', 'getCategories()');
@@ -203,14 +209,6 @@ function swap(clicked) {
         gameTable.innerHTML = '<img class="original-image" src="' + game.gameImage + '">';
         gameMessage.style.display = "flex";
       }, 500);
-
-      /**** Ads ****/
-      if (storage.getItem('mode') == 'yandex') {
-        setTimeout(function () {
-          window.ysdk.adv.showFullscreenAdv();
-        }, 2500);
-      }
-      /*** /Ads ****/
     }
   }
 }
