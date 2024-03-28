@@ -274,13 +274,6 @@ function restartGame() {
   if (game.start) {
     game.start = false;
     storage.removeItem('category_' + game.category + '_state_' + game.level);
-
-    /**** Ads ****/
-    if (storage.getItem('mode') == 'yandex') {
-      window.ysdk.adv.showFullscreenAdv();
-    }
-    /*** /Ads ****/
-
     newGame(game.level, game.category);
   }
 }
