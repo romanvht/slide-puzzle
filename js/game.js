@@ -327,7 +327,6 @@ class PuzzleGame {
   
     this.draggedTile.style.transform = `translate(${translateX}px, ${translateY}px)`;
   }
-  
 
   endDrag() {
     if (this.isDragging) {
