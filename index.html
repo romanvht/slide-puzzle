@@ -7,42 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.3.3">
   <script>
-    const domain = document.domain;
-    if (domain.indexOf("ya") !== -1) {
-      window.localStorage.setItem('mode', 'yandex');
-      let sdk = document.createElement('script');
-      sdk.src = 'https://yandex.ru/games/sdk/v2';
-      document.getElementsByTagName('head')[0].appendChild(sdk);
-    }
-
-    if (window.localStorage.getItem('mode') == 'yandex') {
-      window.onload = function () {
-        YaGames.init().then(ysdk => {
-          ysdk.adv.showFullscreenAdv({
-            callbacks: {
-              onOpen: () => {
-                removePreloader()
-              },
-              onOffline: () => {
-                removePreloader()
-              },
-              onError: () => {
-                removePreloader()
-              }
-            }
-          });
-
-          ysdk.features.LoadingAPI?.ready();
-          window.ysdk = ysdk;
-        });
-      }
-    } else {
-      window.onload = function () {
-        removePreloader();
-      }
-    }
-
-    function removePreloader() {
+    window.onload = function () {
       let preloader = document.getElementById('p_prldr');
       preloader.classList.add('fadeout');
 
@@ -111,7 +76,7 @@
         <div class="message-text">
           Вы отлично справились!
           <div class="message-control">
-            <a href="#" onclick="getLinks()" class="next-button">
+            <a href="#" onclick="game.getCategories()" class="next-button">
               Меню
             </a>
             <a href="#" class="download-button" download>
@@ -128,7 +93,7 @@
         Ходов
         <span class="steps-count_info">0</span>
       </div>
-      <a onclick="muteGame()" href="#" class="game-info_box sound-button">
+      <a onclick="game.muteGame()" href="#" class="game-info_box sound-button">
         <img src="img/sound/on.svg" alt="sound on">
       </a>
     </div>
@@ -139,7 +104,7 @@
       <a href="#" class="menu-button">
         Меню
       </a>
-      <a onclick="restartGame()" href="#" class="restart-button">
+      <a onclick="game.restartGame()" href="#" class="restart-button">
         Рестарт
       </a>
     </div>
@@ -147,12 +112,10 @@
   <audio id="sound">
     <source src="mp3/click.mp3" type="audio/mp3">
   </audio>
-  <script src="js/levels.js?ver=1.3.3"></script>
-  <script src="js/start.js?ver=1.3.3"></script>
-  <script src="js/menu.js?ver=1.3.3"></script>
   <script src="js/game.js?ver=1.3.3"></script>
   <script>
-    getCategories();
+    window.game = new PuzzleGame();
+    window.game.getCategories();
   </script>
 </body>
 
