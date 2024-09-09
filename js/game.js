@@ -69,7 +69,7 @@ class PuzzleGame {
     window.addEventListener("resize", this.resizeGame.bind(this), false);
 
     this.gameTable.addEventListener('mousedown', this.initiateDrag.bind(this));
-    this.gameTable.addEventListener('touchstart', this.initiateDrag.bind(this), { passive: false });
+    this.gameTable.addEventListener('touchstart', this.initiateDrag.bind(this));
   }
 
   newGame(setLevel, setCategory) {
