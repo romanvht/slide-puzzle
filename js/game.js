@@ -48,8 +48,8 @@ class PuzzleGame {
 
   initCategories() {
     this.categories = [
-      { id: 1, folder: 'img/anime/', name: 'Аниме' },
-      { id: 2, folder: 'img/cats/', name: 'Котики' }
+      { id: 0, folder: 'img/anime/', name: 'Аниме' },
+      { id: 1, folder: 'img/cats/', name: 'Котики' }
     ];
   }
 
@@ -215,11 +215,6 @@ class PuzzleGame {
   swap(clicked) {
     if (clicked < 1 || clicked > this.game.numberOfTiles) return;
 
-    if (this.game.start && !this.soundOff) {
-      this.audio.currentTime = 0;
-      this.audio.play();
-    }
-
     const swapConditions = [
       { condition: clicked === this.game.highlighted + 1, check: clicked % this.game.size !== 1 },
       { condition: clicked === this.game.highlighted - 1, check: clicked % this.game.size !== 0 },
@@ -228,7 +223,14 @@ class PuzzleGame {
     ];
 
     swapConditions.forEach(({ condition, check }) => {
-      if (condition && check) this.setSelected(clicked);
+      if (condition && check) {
+        if (this.game.start && !this.soundOff) {
+          this.audio.currentTime = 0;
+          this.audio.play();
+        }
+
+        this.setSelected(clicked);
+      }
     });
 
     if (this.game.start) {
