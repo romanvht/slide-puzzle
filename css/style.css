@@ -203,6 +203,7 @@ h1 {
   background-color: rgba(255, 255, 255, .8);
   padding: 8px;
   border-radius: 0.5rem;
+  touch-action: none;
 }
 
 .original-image {

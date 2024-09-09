@@ -68,8 +68,8 @@ class PuzzleGame {
 
     window.addEventListener("resize", this.resizeGame.bind(this), false);
 
-    this.gameTable.addEventListener('mousedown', this.handleStart.bind(this));
-    this.gameTable.addEventListener('touchstart', this.handleStart.bind(this), { passive: false });
+    this.gameTable.addEventListener('mousedown', this.initiateDrag.bind(this));
+    this.gameTable.addEventListener('touchstart', this.initiateDrag.bind(this), { passive: false });
   }
 
   newGame(setLevel, setCategory) {
@@ -262,23 +262,23 @@ class PuzzleGame {
     }
   }
 
-  handleStart(event) {
+  initiateDrag(event) {
     event.preventDefault();
     const isTouch = event.type === 'touchstart';
     const position = isTouch ? event.touches[0] : event;
     const tile = event.target.closest('.block');
 
     if (tile) {
-      this.startDrag(tile, position.clientX, position.clientY);
+      this.prepareForDrag(tile, position.clientX, position.clientY);
       const moveEvent = isTouch ? 'touchmove' : 'mousemove';
       const endEvent = isTouch ? 'touchend' : 'mouseup';
 
-      document.addEventListener(moveEvent, this.handleMove.bind(this), { passive: false });
-      document.addEventListener(endEvent, this.endDrag.bind(this));
+      this.gameTable.addEventListener(moveEvent, this.trackDragMovement.bind(this));
+      this.gameTable.addEventListener(endEvent, this.finalizeDrag.bind(this));
     }
   }
 
-  startDrag(tile, startX, startY) {
+  prepareForDrag(tile, startX, startY) {
     this.draggedTile = tile;
     this.dragStartX = startX;
     this.dragStartY = startY;
@@ -297,15 +297,15 @@ class PuzzleGame {
     else if (emptyIndex === currentTileIndex - size) this.allowedDirection = 'up';
   }
 
-  handleMove(event) {
+  trackDragMovement(event) {
+    if (!this.isDragging) return;
+
     event.preventDefault();
-    if (this.isDragging) {
-      const position = event.type.includes('touch') ? event.touches[0] : event;
-      this.dragMove(position.clientX, position.clientY);
-    }
+    const position = event.type.includes('touch') ? event.touches[0] : event;
+    this.updateTilePosition(position.clientX, position.clientY);
   }
 
-  dragMove(currentX, currentY) {
+  updateTilePosition(currentX, currentY) {
     if (!this.allowedDirection) return;
   
     const deltaX = currentX - this.dragStartX;
@@ -330,22 +330,22 @@ class PuzzleGame {
     this.draggedTile.style.transform = `translate(${translateX}px, ${translateY}px)`;
   }
 
-  endDrag() {
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.draggedTile.style.transition = '';
-      this.draggedTile.style.transform = '';
+  finalizeDrag() {
+    if (!this.isDragging) return;
 
-      const targetTileIndex = this.getTargetTileIndex();
-      if (targetTileIndex !== null) {
-        this.swap(targetTileIndex + 1);
-      }
+    this.isDragging = false;
+    this.draggedTile.style.transition = '';
+    this.draggedTile.style.transform = '';
 
-      document.removeEventListener('mousemove', this.handleMove.bind(this));
-      document.removeEventListener('mouseup', this.endDrag.bind(this));
-      document.removeEventListener('touchmove', this.handleMove.bind(this));
-      document.removeEventListener('touchend', this.endDrag.bind(this));
+    const targetTileIndex = this.getTargetTileIndex();
+    if (targetTileIndex !== null) {
+      this.swap(targetTileIndex + 1);
     }
+
+    this.gameTable.removeEventListener('mousemove', this.trackDragMovement.bind(this));
+    this.gameTable.removeEventListener('mouseup', this.finalizeDrag.bind(this));
+    this.gameTable.removeEventListener('touchmove', this.trackDragMovement.bind(this));
+    this.gameTable.removeEventListener('touchend', this.finalizeDrag.bind(this));
   }
 
   getTargetTileIndex() {
