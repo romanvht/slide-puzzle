@@ -5,32 +5,26 @@ class PuzzleGame {
     this.numLevels = 16;
     this.levelSize = 3;
     this.sizeUp = 4;
-    this.storage = window.localStorage;
-    this.soundOff = this.storage.getItem('soundOff') === 'yes';
-
-    this.RIGHT_ARROW = 39;
-    this.LEFT_ARROW = 37;
-    this.UP_ARROW = 40;
-    this.DOWN_ARROW = 38;
+    this.storage = new Storage();
+    this.sound = new SoundManager(this.storage);
 
     this.initLevels();
     this.initElements();
     this.initCategories();
-    this.setupEventListeners();
+
+    this.menu = new Menu(this);
+    this.input = new Input(this);
+
+    this.menu.getCategories();
   }
 
   initElements() {
     this.gameContainer = document.querySelector('.game');
     this.gameTable = document.getElementById('tiles');
     this.gameStepInfo = document.querySelector('.steps-count_info');
-    this.gameSoundIcon = document.querySelector('.sound-button');
     this.gameMessage = document.querySelector('.message');
     this.gameNextLink = document.querySelector('.next-button');
     this.gameDownloadLink = document.querySelector('.download-button');
-    this.menuContainer = document.querySelector('.menu');
-    this.menuButton = document.querySelector('.menu-button');
-    this.audio = document.getElementById('sound');
-    if (this.soundOff) this.gameSoundIcon.classList.add('sound-disable');
   }
 
   initLevels() {
@@ -51,25 +45,6 @@ class PuzzleGame {
       { id: 0, folder: 'img/anime/', name: 'Аниме' },
       { id: 1, folder: 'img/cats/', name: 'Котики' }
     ];
-  }
-
-  setupEventListeners() {
-    window.onkeydown = (event) => {
-      if (this.game?.start) {
-        const { highlighted, size } = this.game;
-        switch (event.keyCode) {
-          case this.RIGHT_ARROW: this.swap(highlighted - 1); break;
-          case this.LEFT_ARROW: this.swap(highlighted + 1); break;
-          case this.UP_ARROW: this.swap(highlighted - size); break;
-          case this.DOWN_ARROW: this.swap(highlighted + size); break;
-        }
-      }
-    };
-
-    window.addEventListener("resize", this.resizeGame.bind(this), false);
-
-    this.gameTable.addEventListener('mousedown', this.initiateDrag.bind(this));
-    this.gameTable.addEventListener('touchstart', this.initiateDrag.bind(this));
   }
 
   newGame(setLevel, setCategory) {
@@ -97,13 +72,13 @@ class PuzzleGame {
       canvas.height = image.height;
       context.drawImage(image, 0, 0);
 
-      this.menuContainer.style.display = "none";
+      this.menu.menuContainer.style.display = "none";
       this.gameContainer.style.display = 'flex';
       this.gameMessage.style.display = "none";
       this.gameTable.innerHTML = '';
 
       this.drawGame(context, image);
-      this.resizeGame();
+      this.input.resizeGame();
     };
   }
 
@@ -132,7 +107,7 @@ class PuzzleGame {
       rowTile = Math.floor(index / this.game.size);
     }
 
-    const save = JSON.parse(this.storage.getItem(`category_${this.game.category}_state_${this.game.level}`));
+    const save = this.storage.loadGame(this.game);
 
     if (save) {
       this.game.start = true;
@@ -166,7 +141,6 @@ class PuzzleGame {
       newTile.id = `block${index}`;
       newTile.setAttribute('index', index);
       newTile.setAttribute('number', number);
-      newTile.setAttribute('onclick', `game.swap(${index})`);
       newTile.classList.add('block');
       newTile.append(image);
 
@@ -224,9 +198,8 @@ class PuzzleGame {
 
     swapConditions.forEach(({ condition, check }) => {
       if (condition && check) {
-        if (this.game.start && !this.soundOff) {
-          this.audio.currentTime = 0;
-          this.audio.play();
+        if (this.game.start) {
+          this.sound.playSound();
         }
 
         this.setSelected(clicked);
@@ -234,13 +207,10 @@ class PuzzleGame {
     });
 
     if (this.game.start) {
-      this.storage.setItem(`category_${this.game.category}_state_${this.game.level}`, JSON.stringify(this.saveGame()));
+      this.storage.setItem(`category_${this.game.category}_state_${this.game.level}`, JSON.stringify(this.storage.saveGame(this.game)));
 
       if (this.checkWin()) {
-        const winsJSON = JSON.parse(this.storage.getItem(`category_${this.game.category}_wins`) || '{}');
-        winsJSON[this.game.level] = true;
-        this.storage.removeItem(`category_${this.game.category}_state_${this.game.level}`);
-        this.storage.setItem(`category_${this.game.category}_wins`, JSON.stringify(winsJSON));
+        this.storage.saveWin(this.game);
 
         this.gameDownloadLink.setAttribute('href', this.game.gameImage);
 
@@ -251,7 +221,7 @@ class PuzzleGame {
           this.gameNextLink.setAttribute('onclick', onclickAction);
         } else {
           this.gameNextLink.innerHTML = 'Меню';
-          this.gameNextLink.setAttribute('onclick', 'game.getCategories()');
+          this.gameNextLink.setAttribute('onclick', 'game.menu.getCategories()');
         }
 
         setTimeout(() => {
@@ -260,105 +230,6 @@ class PuzzleGame {
         }, 500);
       }
     }
-  }
-
-  initiateDrag(event) {
-    event.preventDefault();
-    const isTouch = event.type === 'touchstart';
-    const position = isTouch ? event.touches[0] : event;
-    const tile = event.target.closest('.block');
-
-    if (tile) {
-      this.prepareForDrag(tile, position.clientX, position.clientY);
-      const moveEvent = isTouch ? 'touchmove' : 'mousemove';
-      const endEvent = isTouch ? 'touchend' : 'mouseup';
-
-      this.gameTable.addEventListener(moveEvent, this.trackDragMovement.bind(this));
-      this.gameTable.addEventListener(endEvent, this.finalizeDrag.bind(this));
-    }
-  }
-
-  prepareForDrag(tile, startX, startY) {
-    this.draggedTile = tile;
-    this.dragStartX = startX;
-    this.dragStartY = startY;
-    this.isDragging = true;
-    this.draggedTile.style.transition = 'none';
-
-    const currentTileIndex = parseInt(tile.getAttribute('index'));
-    const emptyIndex = this.game.highlighted;
-    const size = this.game.size;
-
-    this.allowedDirection = null;
-
-    if (emptyIndex === currentTileIndex + 1) this.allowedDirection = 'right';
-    else if (emptyIndex === currentTileIndex - 1) this.allowedDirection = 'left';
-    else if (emptyIndex === currentTileIndex + size) this.allowedDirection = 'down';
-    else if (emptyIndex === currentTileIndex - size) this.allowedDirection = 'up';
-  }
-
-  trackDragMovement(event) {
-    if (!this.isDragging) return;
-
-    event.preventDefault();
-    const position = event.type.includes('touch') ? event.touches[0] : event;
-    this.updateTilePosition(position.clientX, position.clientY);
-  }
-
-  updateTilePosition(currentX, currentY) {
-    if (!this.allowedDirection) return;
-  
-    const deltaX = currentX - this.dragStartX;
-    const deltaY = currentY - this.dragStartY;
-  
-    let translateX = 0;
-    let translateY = 0;
-  
-    const tileRect = this.draggedTile.getBoundingClientRect();
-    const tileSize = tileRect.width;
-  
-    if (this.allowedDirection === 'right' && deltaX > 0) {
-      translateX = Math.min(deltaX, tileSize);
-    } else if (this.allowedDirection === 'left' && deltaX < 0) {
-      translateX = Math.max(deltaX, -tileSize);
-    } else if (this.allowedDirection === 'down' && deltaY > 0) {
-      translateY = Math.min(deltaY, tileSize);
-    } else if (this.allowedDirection === 'up' && deltaY < 0) {
-      translateY = Math.max(deltaY, -tileSize);
-    }
-  
-    this.draggedTile.style.transform = `translate(${translateX}px, ${translateY}px)`;
-  }
-
-  finalizeDrag() {
-    if (!this.isDragging) return;
-
-    this.isDragging = false;
-    this.draggedTile.style.transition = '';
-    this.draggedTile.style.transform = '';
-
-    const targetTileIndex = this.getTargetTileIndex();
-    if (targetTileIndex !== null) {
-      this.swap(targetTileIndex + 1);
-    }
-
-    this.gameTable.removeEventListener('mousemove', this.trackDragMovement.bind(this));
-    this.gameTable.removeEventListener('mouseup', this.finalizeDrag.bind(this));
-    this.gameTable.removeEventListener('touchmove', this.trackDragMovement.bind(this));
-    this.gameTable.removeEventListener('touchend', this.finalizeDrag.bind(this));
-  }
-
-  getTargetTileIndex() {
-    const rect = this.draggedTile.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const tiles = Array.from(this.gameTable.children);
-    return tiles.findIndex(tile => {
-      const tileRect = tile.getBoundingClientRect();
-      return tileRect.left < centerX && centerX < tileRect.right &&
-        tileRect.top < centerY && centerY < tileRect.bottom;
-    });
   }
 
   setSelected(index) {
@@ -393,112 +264,11 @@ class PuzzleGame {
     });
   }
 
-  saveGame() {
-    const saveArray = [...Array(this.game.numberOfTiles).keys()].map(index => {
-      const currentTile = document.getElementById(`block${index + 1}`);
-      return {
-        selected: currentTile.classList.contains('selected'),
-        value: parseInt(currentTile.getAttribute('number'))
-      };
-    });
-
-    return {
-      table: saveArray,
-      highlighted: this.game.highlighted,
-      start: this.game.start,
-      steps: this.game.step
-    };
-  }
-
   restartGame() {
     if (this.game.start) {
       this.game.start = false;
       this.storage.removeItem(`category_${this.game.category}_state_${this.game.level}`);
       this.newGame(this.game.level, this.game.category);
     }
-  }
-
-  muteGame() {
-    this.soundOff = !this.soundOff;
-    this.gameSoundIcon.classList.toggle('sound-disable', this.soundOff);
-    this.storage.setItem('soundOff', this.soundOff ? 'yes' : 'no');
-  }
-
-  menuToggle() {
-    this.menuContainer.innerHTML = '';
-    this.menuContainer.style.display = 'flex';
-    this.gameContainer.style.display = 'none';
-    this.game = false;
-  }
-
-  getCategories() {
-    this.menuToggle();
-
-    const title = document.createElement('h1');
-    title.innerHTML = 'Выберите<br>категорию';
-    this.menuContainer.append(title);
-
-    const links = document.createElement('div');
-    links.classList.add('main-images');
-
-    this.categories.forEach(category => {
-      const linkCat = document.createElement('a');
-      linkCat.innerHTML = `<div class="cat-text">${category.name}</div>`;
-      linkCat.setAttribute('onclick', `game.getLevels(${category.id})`);
-      linkCat.classList.add(`cat${category.id}`);
-
-      const imgCat = document.createElement('img');
-      imgCat.src = `${category.folder}1.jpg`;
-
-      linkCat.append(imgCat);
-      links.append(linkCat);
-    });
-
-    this.menuContainer.append(links);
-  }
-
-  getLevels(category) {
-    this.menuToggle();
-
-    const title = document.createElement('h1');
-    title.innerHTML = 'Выберите<br>изображение';
-    this.menuContainer.append(title);
-
-    const links = document.createElement('div');
-    links.classList.add('main-images');
-
-    const backButton = document.createElement('a');
-    backButton.classList.add('back-button');
-    backButton.setAttribute('onclick', 'game.getCategories()');
-    backButton.innerHTML = 'Категории';
-
-    this.levels.forEach(level => {
-      const linkLevel = document.createElement('a');
-      const imgLevel = document.createElement('img');
-      imgLevel.src = `${this.categories[category].folder}${level.image}`;
-      linkLevel.setAttribute('onclick', `game.newGame(${level.id}, ${category})`);
-      linkLevel.classList.add(`level${level.id}`);
-      linkLevel.append(imgLevel);
-      links.append(linkLevel);
-    });
-
-    this.menuButton.setAttribute('onclick', `game.getLevels(${category})`);
-    this.menuContainer.append(links);
-    this.menuContainer.append(backButton);
-
-    const winsJSON = JSON.parse(this.storage.getItem(`category_${category}_wins`) || '{}');
-    Object.keys(winsJSON).forEach(key => {
-      if (winsJSON[key]) {
-        const level = document.querySelector(`.level${key}`);
-        if (level) level.classList.add("no-blur");
-      }
-    });
-  }
-
-  resizeGame() {
-    const orient = window.matchMedia("(orientation: portrait)");
-    const size = orient.matches ? this.gameContainer.clientWidth * 0.9 : this.gameContainer.clientHeight * 0.8;
-    this.gameTable.style.width = `${size}px`;
-    this.gameTable.style.height = `${size}px`;
   }
 }
