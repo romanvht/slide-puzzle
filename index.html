@@ -7,16 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" media="screen" href="css/style.css?ver=1.4.0">
   <link rel="icon" href="img/icons/icon.png" type="image/png">
-  <script>
-    window.onload = function () {
-      let preloader = document.getElementById('p_prldr');
-      preloader.classList.add('fadeout');
-
-      setTimeout(function () {
-        preloader.parentNode.removeChild(preloader);
-      }, 200);
-    }
-  </script>
 </head>
 
 <body>
@@ -85,6 +75,15 @@
   <script src="js/game.js?ver=1.4.0"></script>
   <script>
     window.game = new PuzzleGame();
+
+    window.onload = function () {
+      const preloader = document.getElementById('p_prldr');
+      preloader.classList.add('fadeout');
+
+      setTimeout(function () {
+        preloader.parentNode.removeChild(preloader);
+      }, 200);
+    }
   </script>
 </body>
 
