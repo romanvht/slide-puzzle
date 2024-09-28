@@ -7,6 +7,7 @@ html {
 }
 
 body {
+  background-color: rgba(14, 127, 220, .7);
   background-image: url(../img/background.png); 
   background-position: center center;
   font: 1em Arial, sans-serif;
@@ -44,6 +45,7 @@ a {
 
 #p_prldr {
   position: fixed;
+  background-color: rgba(14, 127, 220, .7);
   background-image: url(../img/background.png); 
   background-position: center center;
   left: 0;
