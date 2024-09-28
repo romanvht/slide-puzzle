@@ -42,8 +42,8 @@ class PuzzleGame {
 
   initCategories() {
     this.categories = [
-      { id: 0, folder: 'img/anime/', name: 'Аниме' },
-      { id: 1, folder: 'img/cats/', name: 'Котики' }
+      { id: 0, folder: 'assets/levels/anime/', name: 'Аниме' },
+      { id: 1, folder: 'assets/levels/cats/', name: 'Котики' }
     ];
   }
 
