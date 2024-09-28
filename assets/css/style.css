@@ -44,8 +44,8 @@ a {
 
 #p_prldr {
   position: fixed;
-  background: radial-gradient(ellipse at center, #0a2864 0%,#3164bc 100%);
-  background-size: 100% 100%;
+  background-image: url(../img/background.png); 
+  background-position: center center;
   left: 0;
   top: 0;
   right: 0;
