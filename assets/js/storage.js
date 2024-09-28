@@ -42,4 +42,12 @@ class Storage {
         this.removeItem(`category_${game.category}_state_${game.level}`);
         this.setItem(`category_${game.category}_wins`, JSON.stringify(winsJSON));
     }
+
+    getSoundStatus() {
+        return localStorage.getItem('sound') ? localStorage.getItem('sound') : 'enable';
+    }
+
+    setSoundStatus(status) {
+        localStorage.setItem('sound', status)
+    }
 }

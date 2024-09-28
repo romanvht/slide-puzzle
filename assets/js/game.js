@@ -4,16 +4,16 @@ class PuzzleGame {
     this.categories = [];
     this.numLevels = 16;
     this.levelSize = 3;
-    this.sizeUp = 4;
+    this.sizeUp = 6;
     this.storage = new Storage();
-    this.sound = new SoundManager(this.storage);
+    this.sound = new Sound();
 
     this.initLevels();
     this.initElements();
     this.initCategories();
 
-    this.menu = new Menu(this);
-    this.input = new Input(this);
+    this.input = new Input(this, this.sound);
+    this.menu = new Menu(this, this.storage, this.sound);
 
     this.menu.getCategories();
   }
@@ -22,9 +22,6 @@ class PuzzleGame {
     this.gameContainer = document.querySelector('.game');
     this.gameTable = document.getElementById('tiles');
     this.gameStepInfo = document.querySelector('.steps-count_info');
-    this.gameMessage = document.querySelector('.message');
-    this.gameNextLink = document.querySelector('.next-button');
-    this.gameDownloadLink = document.querySelector('.download-button');
   }
 
   initLevels() {
@@ -42,8 +39,10 @@ class PuzzleGame {
 
   initCategories() {
     this.categories = [
-      { id: 0, folder: 'assets/levels/anime/', name: 'Аниме' },
-      { id: 1, folder: 'assets/levels/cats/', name: 'Котики' }
+      { id: 0, folder: 'assets/levels/minecraft/', name: 'Minecraft' },
+      { id: 1, folder: 'assets/levels/fnaf/', name: 'FNAF' },
+      { id: 2, folder: 'assets/levels/anime/', name: 'Аниме' },
+      { id: 3, folder: 'assets/levels/cats/', name: 'Котики' }
     ];
   }
 
@@ -51,7 +50,7 @@ class PuzzleGame {
     const levelDetails = this.levels[setLevel];
     const categoryDetails = this.categories[setCategory];
 
-    this.game = {
+    this.currentLevel = {
       level: setLevel,
       category: setCategory,
       size: levelDetails.size,
@@ -66,17 +65,14 @@ class PuzzleGame {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d', { willReadFrequently: true });
 
-    image.src = this.game.gameImage;
+    image.src = this.currentLevel.gameImage;
     image.onload = () => {
       canvas.width = image.width;
       canvas.height = image.height;
       context.drawImage(image, 0, 0);
 
-      this.menu.menuContainer.style.display = "none";
-      this.gameContainer.style.display = 'flex';
-      this.gameMessage.style.display = "none";
-      this.gameTable.innerHTML = '';
-
+      this.menu.showGame();
+      this.sound.playAmbient();
       this.drawGame(context, image);
       this.input.resizeGame();
     };
@@ -87,35 +83,35 @@ class PuzzleGame {
     let cellTile = 0;
     let rowTile = 0;
 
-    for (let index = 1; index <= this.game.numberOfTiles; index++) {
+    for (let index = 1; index <= this.currentLevel.numberOfTiles; index++) {
       const imgTile = document.createElement('img');
-      const imgSize = image.width / this.game.size;
+      const imgSize = image.width / this.currentLevel.size;
       const imgWidthCut = imgSize * cellTile;
       const imgHeightCut = imgSize * rowTile;
 
       imgTile.src = this.cutImage(context, imgWidthCut, imgHeightCut, imgSize, imgSize);
       imgTile.number = index;
 
-      if (index === this.game.numberOfTiles) imgTile.last = true;
+      if (index === this.currentLevel.numberOfTiles) imgTile.last = true;
 
       imageArray.push({
         number: imgTile.number,
         image: imgTile
       });
 
-      cellTile = cellTile >= this.game.size - 1 ? 0 : cellTile + 1;
-      rowTile = Math.floor(index / this.game.size);
+      cellTile = cellTile >= this.currentLevel.size - 1 ? 0 : cellTile + 1;
+      rowTile = Math.floor(index / this.currentLevel.size);
     }
 
-    const save = this.storage.loadGame(this.game);
+    const save = this.storage.loadGame(this.currentLevel);
 
     if (save) {
-      this.game.start = true;
-      this.game.step = save.steps;
-      this.gameStepInfo.textContent = this.game.step;
+      this.currentLevel.start = true;
+      this.currentLevel.step = save.steps;
+      this.gameStepInfo.textContent = this.currentLevel.step;
       this.createTiles(imageArray, save);
     } else {
-      this.game.start = false;
+      this.currentLevel.start = false;
       this.gameStepInfo.textContent = 0;
       this.createTiles(imageArray);
       this.shuffle();
@@ -136,8 +132,8 @@ class PuzzleGame {
         selected: tile.image.last
       };
 
-      newTile.style.width = `${100 / this.game.size}%`;
-      newTile.style.height = `${100 / this.game.size}%`;
+      newTile.style.width = `${100 / this.currentLevel.size}%`;
+      newTile.style.height = `${100 / this.currentLevel.size}%`;
       newTile.id = `block${index}`;
       newTile.setAttribute('index', index);
       newTile.setAttribute('number', number);
@@ -145,7 +141,7 @@ class PuzzleGame {
       newTile.append(image);
 
       if (selected) {
-        this.game.highlighted = index;
+        this.currentLevel.highlighted = index;
         newTile.classList.add("selected");
       }
 
@@ -165,75 +161,59 @@ class PuzzleGame {
 
   shuffle() {
     const minShuffles = 100;
-    const totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 * this.game.size);
+    const totalShuffles = minShuffles + Math.floor(Math.random() * (100 - 50) + 50 * this.currentLevel.size);
 
     this.gameContainer.style.pointerEvents = "none";
 
     for (let i = minShuffles; i <= totalShuffles; i++) {
       setTimeout(() => {
         const directionOptions = [
-          this.game.highlighted + 1,
-          this.game.highlighted - 1,
-          this.game.highlighted + this.game.size,
-          this.game.highlighted - this.game.size
+          this.currentLevel.highlighted + 1,
+          this.currentLevel.highlighted - 1,
+          this.currentLevel.highlighted + this.currentLevel.size,
+          this.currentLevel.highlighted - this.currentLevel.size
         ];
         this.swap(directionOptions[Math.floor(Math.random() * 4)]);
         if (i >= totalShuffles) {
           this.gameContainer.style.pointerEvents = "auto";
-          this.game.start = true;
+          this.currentLevel.start = true;
         }
       }, i * 5);
     }
   }
 
   swap(clicked) {
-    if (clicked < 1 || clicked > this.game.numberOfTiles) return;
+    if (clicked < 1 || clicked > this.currentLevel.numberOfTiles) return;
 
     const swapConditions = [
-      { condition: clicked === this.game.highlighted + 1, check: clicked % this.game.size !== 1 },
-      { condition: clicked === this.game.highlighted - 1, check: clicked % this.game.size !== 0 },
-      { condition: clicked === this.game.highlighted + this.game.size, check: true },
-      { condition: clicked === this.game.highlighted - this.game.size, check: true }
+      { condition: clicked === this.currentLevel.highlighted + 1, check: clicked % this.currentLevel.size !== 1 },
+      { condition: clicked === this.currentLevel.highlighted - 1, check: clicked % this.currentLevel.size !== 0 },
+      { condition: clicked === this.currentLevel.highlighted + this.currentLevel.size, check: true },
+      { condition: clicked === this.currentLevel.highlighted - this.currentLevel.size, check: true }
     ];
 
     swapConditions.forEach(({ condition, check }) => {
       if (condition && check) {
-        if (this.game.start) {
-          this.sound.playSound();
+        if (this.currentLevel.start) {
+          this.sound.playSound('click');
         }
 
         this.setSelected(clicked);
       }
     });
 
-    if (this.game.start) {
-      this.storage.setItem(`category_${this.game.category}_state_${this.game.level}`, JSON.stringify(this.storage.saveGame(this.game)));
+    if (this.currentLevel.start) {
+      this.storage.setItem(`category_${this.currentLevel.category}_state_${this.currentLevel.level}`, JSON.stringify(this.storage.saveGame(this.currentLevel)));
 
       if (this.checkWin()) {
-        this.storage.saveWin(this.game);
-
-        this.gameDownloadLink.setAttribute('href', this.game.gameImage);
-
-        const nextLevel = this.game.level + 1;
-        if (nextLevel < this.numLevels) {
-          this.gameNextLink.innerHTML = 'Далее';
-          const onclickAction = `game.newGame(${nextLevel}, ${this.game.category})`;
-          this.gameNextLink.setAttribute('onclick', onclickAction);
-        } else {
-          this.gameNextLink.innerHTML = 'Меню';
-          this.gameNextLink.setAttribute('onclick', 'game.menu.getCategories()');
-        }
-
-        setTimeout(() => {
-          this.gameTable.innerHTML = `<img class="original-image" src="${this.game.gameImage}">`;
-          this.gameMessage.style.display = "flex";
-        }, 500);
+        this.storage.saveWin(this.currentLevel);
+        this.menu.showNextLevel(this.currentLevel.level + 1);
       }
     }
   }
 
   setSelected(index) {
-    const currentTile = document.getElementById(`block${this.game.highlighted}`);
+    const currentTile = document.getElementById(`block${this.currentLevel.highlighted}`);
     const newTile = document.getElementById(`block${index}`);
 
     const currentTileHtml = currentTile.innerHTML;
@@ -250,25 +230,17 @@ class PuzzleGame {
     newTile.innerHTML = currentTileHtml;
     newTile.setAttribute('number', currentTileNumber);
 
-    this.game.highlighted = index;
-    if (this.game.start) {
-      this.game.step++;
-      this.gameStepInfo.textContent = this.game.step;
+    this.currentLevel.highlighted = index;
+    if (this.currentLevel.start) {
+      this.currentLevel.step++;
+      this.gameStepInfo.textContent = this.currentLevel.step;
     }
   }
 
   checkWin() {
-    return [...Array(this.game.numberOfTiles).keys()].every(index => {
+    return [...Array(this.currentLevel.numberOfTiles).keys()].every(index => {
       const currentTile = document.getElementById(`block${index + 1}`);
       return parseInt(currentTile.getAttribute('index')) === parseInt(currentTile.getAttribute('number'));
     });
-  }
-
-  restartGame() {
-    if (this.game.start) {
-      this.game.start = false;
-      this.storage.removeItem(`category_${this.game.category}_state_${this.game.level}`);
-      this.newGame(this.game.level, this.game.category);
-    }
   }
 }

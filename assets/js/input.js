@@ -1,6 +1,8 @@
 class Input {
-    constructor(game) {
+    constructor(game, sound) {
         this.game = game;
+        this.sound = sound;
+
         this.draggedTile = null;
         this.dragStartX = 0;
         this.dragStartY = 0;
@@ -17,8 +19,8 @@ class Input {
 
     setupEventListeners() {
         window.onkeydown = (event) => {
-            if (this.game.game?.start) {
-                const { highlighted, size } = this.game.game;
+            if (this.game.currentLevel?.start) {
+                const { highlighted, size } = this.game.currentLevel;
                 switch (event.keyCode) {
                     case this.RIGHT_ARROW: this.game.swap(highlighted - 1); break;
                     case this.LEFT_ARROW: this.game.swap(highlighted + 1); break;
@@ -28,10 +30,11 @@ class Input {
             }
         };
 
-        window.addEventListener("resize", this.resizeGame.bind(this), false);
-
         this.game.gameTable.addEventListener('mousedown', this.initiateDrag.bind(this));
         this.game.gameTable.addEventListener('touchstart', this.initiateDrag.bind(this));
+
+        window.addEventListener("resize", this.resizeGame.bind(this), false);
+        window.addEventListener("visibilitychange", () => this.sound.onFocus());
     }
 
     resizeGame() {
@@ -66,8 +69,8 @@ class Input {
         this.draggedTile.style.transition = 'none';
 
         const currentTileIndex = parseInt(tile.getAttribute('index'));
-        const emptyIndex = this.game.game.highlighted;
-        const size = this.game.game.size;
+        const emptyIndex = this.game.currentLevel.highlighted;
+        const size = this.game.currentLevel.size;
 
         this.allowedDirection = null;
 
