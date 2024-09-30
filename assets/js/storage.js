@@ -44,10 +44,10 @@ class Storage {
     }
 
     getSoundStatus() {
-        return localStorage.getItem('sound') ? localStorage.getItem('sound') : 'enable';
+        return this.storage.getItem('sound') ? this.storage.getItem('sound') : 'enable';
     }
 
     setSoundStatus(status) {
-        localStorage.setItem('sound', status)
+        this.storage.setItem('sound', status)
     }
 }
