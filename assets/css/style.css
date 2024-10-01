@@ -98,6 +98,11 @@ a {
 
 img {
   max-width: 100%;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 h1 {
@@ -165,7 +170,7 @@ h1 {
   }
 
   .cat-text {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 
