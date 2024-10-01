@@ -98,11 +98,6 @@ a {
 
 img {
   max-width: 100%;
-  user-select: none;
-  -ms-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
 }
 
 h1 {
