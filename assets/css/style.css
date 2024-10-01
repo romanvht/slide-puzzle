@@ -318,6 +318,7 @@ h1 {
   width: 60%;
   height: 60%;
   vertical-align: middle;
+  pointer-events: none;
 }
 
 .sound-disable img {
